@@ -134,10 +134,14 @@ public:
 
 	virtual void init() = 0;
 	virtual void set_salt(const uint8_t* salt, const uint32_t len) = 0;
-	virtual bool update(const uint8_t* src, const uint32_t len) = 0;
+	virtual bool update(const uint8_t* src, const uint64_t len) = 0;
 	virtual bool finish(_MDAVALUE& dst) = 0;
 };
 
 extern "C" MDA_EXT void CreateMD5(CMDA_Base*& pbase);
 extern "C" MDA_EXT void ReleaseMD5(CMDA_Base*& pbase);
-extern "C" MDA_EXT void CalcMD5(const uint8_t* src, const uint32_t len, _MDAVALUE& val);
+extern "C" MDA_EXT void CalcMD5(const uint8_t* src, const uint64_t len, _MDAVALUE& val, const uint8_t* salt, const uint32_t saltlen);
+
+extern "C" MDA_EXT void CreateSHA1(CMDA_Base*& pbase);
+extern "C" MDA_EXT void ReleaseSHA1(CMDA_Base*& pbase);
+extern "C" MDA_EXT void CalcSHA1(const uint8_t* src, const uint64_t len, _MDAVALUE& val, const uint8_t* salt, const uint32_t saltlen);

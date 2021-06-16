@@ -1,7 +1,8 @@
 #pragma once
+
 #include "MDAdefines.h"
 
-constexpr uint32_t c_md5initval[4] = { 0x67452301UL,0xEFCDAB89UL,0x98BADCFEUL,0x10325476UL };
+constexpr uint32_t c_md5initvar[] = { 0x67452301UL, 0xEFCDAB89UL, 0x98BADCFEUL, 0x10325476UL };
 
 #define F(x, y, z) (((x) & (y)) | ((~(x)) & (z)))
 #define G(x, y, z) (((x) & (z)) | ((y) & (~(z))))
@@ -98,7 +99,7 @@ public:
 
 	virtual void init();
 	virtual void set_salt(const uint8_t* salt, const uint32_t len);
-	virtual bool update(const uint8_t* src, const uint32_t len);
+	virtual bool update(const uint8_t* src, const uint64_t len);
 	virtual bool finish(_MDAVALUE& dst);
 
 private:
@@ -108,9 +109,9 @@ private:
 	uint32_t p_saltlen;
 
 	uint8_t buffer[64];
-	uint32_t buflen;
+	uint64_t buflen;
 
-	uint32_t totbits;
+	uint64_t totbits;
 
 	void transform();
 };

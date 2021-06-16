@@ -10,11 +10,15 @@ int main()
 {
     std::cout << "Hello World!\n";
 	
-	uint8_t s[5] = { "把" };
+	uint8_t s[7] = { "123456" };
 	_MDAVALUE val;
-	CalcMD5(s, 2, val);
+	uint8_t salt[4] = { "123" };
+	//CalcMD5(s, 6, val, nullptr, 0);
+	//CalcMD5(s, 6, val, salt, 3);
+	//CalcSHA1(s, 6, val, nullptr, 0);
+	CalcSHA1(nullptr, 0, val, nullptr, 0);
 
-	printf("%u %u %u %u\n", val.pval[0], val.pval[1], val.pval[2], val.pval[3]);
+	printf("%u %u %u %u %u\n", val.pval[0], val.pval[1], val.pval[2], val.pval[3], val.pval[4]);
 
 	char table[] = "0123456789abcdef";
 

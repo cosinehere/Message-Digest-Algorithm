@@ -2,7 +2,7 @@
 #include "CMDA_MD5.h"
 
 CMDA_MD5::CMDA_MD5()
-	: p_val(c_md5initval, 4)
+	: p_val(c_md5initvar, 4)
 {
 	p_salt = nullptr;
 	p_saltlen = 0;
@@ -23,7 +23,7 @@ CMDA_MD5::~CMDA_MD5()
 
 void CMDA_MD5::init()
 {
-	p_val.init(c_md5initval, 4);
+	p_val.init(c_md5initvar, 4);
 
 	if (p_salt != nullptr)
 	{
@@ -48,13 +48,13 @@ void CMDA_MD5::set_salt(const uint8_t* salt, const uint32_t len)
 	p_saltlen = len;
 }
 
-bool CMDA_MD5::update(const uint8_t* src, const uint32_t len)
+bool CMDA_MD5::update(const uint8_t* src, const uint64_t len)
 {
-	uint32_t cnt = 0;
+	uint64_t cnt = 0;
 	while (cnt < len)
 	{
-		uint32_t bufleft = (len - cnt > 64 - buflen) ? (64 - buflen) : (len - cnt);
-		memcpy_s(&buffer[buflen], sizeof(uint8_t)*bufleft, src + cnt, sizeof(uint8_t)*bufleft);
+		uint64_t bufleft = (len - cnt > 64 - buflen) ? (64 - buflen) : (len - cnt);
+		memcpy_s(&buffer[buflen], (rsize_t)bufleft * sizeof(uint8_t), src + cnt, (rsize_t)bufleft * sizeof(uint8_t));
 		cnt += bufleft;
 		buflen += bufleft;
 
@@ -72,7 +72,12 @@ bool CMDA_MD5::update(const uint8_t* src, const uint32_t len)
 
 bool CMDA_MD5::finish(_MDAVALUE& dst)
 {
-	uint32_t tot = totbits*8;
+	if (p_salt != nullptr)
+	{
+		update(p_salt, p_saltlen);
+	}
+
+	uint64_t tot = totbits*8;
 	++totbits;
 	buffer[buflen] = 0x80;
 	++buflen;
@@ -89,16 +94,12 @@ bool CMDA_MD5::finish(_MDAVALUE& dst)
 		}
 	}
 
-	buffer[buflen] = tot & 0x000000ff;
-	buffer[buflen + 1] = (tot & 0x0000ff00) >> 8;
-	buffer[buflen + 2] = (tot & 0x00ff0000) >> 16;
-	buffer[buflen + 3] = (tot & 0xff000000) >> 24;
-	buffer[buflen + 4] = 0;
-	buffer[buflen + 5] = 0;
-	buffer[buflen + 6] = 0;
-	buffer[buflen + 7] = 0;
-
+	for (int i = 0; i < 8; ++i)
+	{
+		buffer[buflen + i] = (tot >> (i * 8)) & 0xff;
+	}
 	buflen += 8;
+
 	if (buflen == 64)
 	{
 		transform();
@@ -141,11 +142,18 @@ extern "C" MDA_EXT void ReleaseMD5(CMDA_Base*& pbase)
 	}
 }
 
-extern "C" MDA_EXT void CalcMD5(const uint8_t* src, const uint32_t len, _MDAVALUE& val)
+extern "C" MDA_EXT void CalcMD5(const uint8_t* src, const uint64_t len, _MDAVALUE& val, const uint8_t* salt, const uint32_t saltlen)
 {
 	CMDA_MD5* pmd5 = new CMDA_MD5();
 	pmd5->init();
-	pmd5->update(src, len);
+	if (salt != nullptr && saltlen != 0)
+	{
+		pmd5->set_salt(salt, saltlen);
+	}
+	if (src != nullptr && len != 0)
+	{
+		pmd5->update(src, len);
+	}
 	pmd5->finish(val);
 	delete pmd5;
 }
