@@ -30,6 +30,9 @@
     <ClInclude Include="CMDA_SHA1.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="CMDA_SHA256.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp">
@@ -42,6 +45,9 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="CMDA_SHA1.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="CMDA_SHA256.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>
