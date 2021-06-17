@@ -127,22 +127,22 @@ void CMDA_MD5::transform()
 	p_val.pval[3] += d;
 }
 
-extern "C" MDA_EXT void CreateMD5(CMDA_Base*& pbase)
+void CreateMD5(CMDA_Base*& pbase)
 {
 	pbase = reinterpret_cast<CMDA_Base*>(new CMDA_MD5());
 }
 
-extern "C" MDA_EXT void ReleaseMD5(CMDA_Base*& pbase)
+void ReleaseMD5(CMDA_Base*& pbase)
 {
 	if (pbase != nullptr)
 	{
 		CMDA_MD5* pmd5 = reinterpret_cast<CMDA_MD5*>(pbase);
 		delete pmd5;
-		pbase = nullptr;;
+		pbase = nullptr;
 	}
 }
 
-extern "C" MDA_EXT void CalcMD5(const uint8_t* src, const uint64_t len, _MDAVALUE& val, const uint8_t* salt, const uint32_t saltlen)
+void CalcMD5(const uint8_t* src, const uint64_t len, _MDAVALUE& val, const uint8_t* salt, const uint32_t saltlen)
 {
 	CMDA_MD5* pmd5 = new CMDA_MD5();
 	pmd5->init();

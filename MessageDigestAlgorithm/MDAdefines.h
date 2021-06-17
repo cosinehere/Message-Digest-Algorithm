@@ -18,6 +18,10 @@ typedef unsigned int       uint32_t;
 typedef unsigned long long uint64_t;
 #endif // ifndef _STDINT
 
+constexpr uint32_t c_md5 = 65537;
+constexpr uint32_t c_sha1 = 65539;
+constexpr uint32_t c_sha2_256 = 65543;
+
 struct _MDAVALUE
 {
 	uint32_t* pval;
@@ -115,7 +119,7 @@ struct _MDAVALUE
 	}
 };
 
-class MDA_EXT CMDA_Base
+class CMDA_Base
 {
 public:
 	CMDA_Base() = default;
@@ -131,15 +135,28 @@ public:
 	virtual bool finish(_MDAVALUE& dst) = 0;
 };
 
-extern "C" MDA_EXT void CreateMD5(CMDA_Base*& pbase);
-extern "C" MDA_EXT void ReleaseMD5(CMDA_Base*& pbase);
-extern "C" MDA_EXT void CalcMD5(const uint8_t* src, const uint64_t len, _MDAVALUE& val, const uint8_t* salt, const uint32_t saltlen);
+void CreateMD5(CMDA_Base*& pbase);
+void ReleaseMD5(CMDA_Base*& pbase);
+void CalcMD5(const uint8_t* src, const uint64_t len, _MDAVALUE& val, const uint8_t* salt, const uint32_t saltlen);
 
-extern "C" MDA_EXT void CreateSHA1(CMDA_Base*& pbase);
-extern "C" MDA_EXT void ReleaseSHA1(CMDA_Base*& pbase);
-extern "C" MDA_EXT void CalcSHA1(const uint8_t* src, const uint64_t len, _MDAVALUE& val, const uint8_t* salt, const uint32_t saltlen);
+void CreateSHA1(CMDA_Base*& pbase);
+void ReleaseSHA1(CMDA_Base*& pbase);
+void CalcSHA1(const uint8_t* src, const uint64_t len, _MDAVALUE& val, const uint8_t* salt, const uint32_t saltlen);
 
-extern "C" MDA_EXT void CreateSHA256(CMDA_Base*& pbase);
-extern "C" MDA_EXT void ReleaseSHA256(CMDA_Base*& pbase);
-extern "C" MDA_EXT void CalcSHA256(const uint8_t* src, const uint64_t len, _MDAVALUE& val, const uint8_t* salt, const uint32_t saltlen);
+void CreateSHA256(CMDA_Base*& pbase);
+void ReleaseSHA256(CMDA_Base*& pbase);
+void CalcSHA256(const uint8_t* src, const uint64_t len, _MDAVALUE& val, const uint8_t* salt, const uint32_t saltlen);
 
+enum class enum_digest
+{
+	enum_digest_md5 = 0,
+	enum_digest_sha1,
+	enum_digest_sha2_256
+};
+
+void PreProcessVal(_MDAVALUE& val, enum_digest& digest);
+void PostProcessVal(enum_digest digest, _MDAVALUE& val);
+
+extern "C" MDA_EXT bool PathDigest(const char* path, _MDAVALUE& val, const uint8_t * salt, const uint32_t saltlen);
+extern "C" MDA_EXT bool FileDigest(const char* path, _MDAVALUE& val, const uint8_t * salt, const uint32_t saltlen);
+extern "C" MDA_EXT bool Digest(const uint8_t* src, const uint64_t len, _MDAVALUE& val, const uint8_t* salt, const uint32_t saltlen);

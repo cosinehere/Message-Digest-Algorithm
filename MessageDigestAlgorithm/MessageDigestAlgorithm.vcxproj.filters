@@ -50,5 +50,8 @@
     <ClCompile Include="CMDA_SHA256.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="MDAdefines.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

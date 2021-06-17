@@ -155,22 +155,22 @@ void CMDA_SHA256::transform()
 	p_val.pval[7] += h;
 }
 
-extern "C" MDA_EXT void CreateSHA256(CMDA_Base*& pbase)
+void CreateSHA256(CMDA_Base*& pbase)
 {
 	pbase = reinterpret_cast<CMDA_Base*>(new CMDA_SHA256());
 }
 
-extern "C" MDA_EXT void ReleaseSHA256(CMDA_Base*& pbase)
+void ReleaseSHA256(CMDA_Base*& pbase)
 {
 	if (pbase != nullptr)
 	{
 		CMDA_SHA256* psha256 = reinterpret_cast<CMDA_SHA256*>(pbase);
 		delete psha256;
-		pbase = nullptr;;
+		pbase = nullptr;
 	}
 }
 
-extern "C" MDA_EXT void CalcSHA256(const uint8_t* src, const uint64_t len, _MDAVALUE& val, const uint8_t* salt, const uint32_t saltlen)
+void CalcSHA256(const uint8_t* src, const uint64_t len, _MDAVALUE& val, const uint8_t* salt, const uint32_t saltlen)
 {
 	CMDA_SHA256* psha256 = new CMDA_SHA256();
 	psha256->init();

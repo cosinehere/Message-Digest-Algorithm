@@ -160,22 +160,22 @@ void CMDA_SHA1::transform()
 	p_val.pval[4] += e;
 }
 
-extern "C" MDA_EXT void CreateSHA1(CMDA_Base*& pbase)
+void CreateSHA1(CMDA_Base*& pbase)
 {
 	pbase = reinterpret_cast<CMDA_Base*>(new CMDA_SHA1());
 }
 
-extern "C" MDA_EXT void ReleaseSHA1(CMDA_Base*& pbase)
+void ReleaseSHA1(CMDA_Base*& pbase)
 {
 	if (pbase != nullptr)
 	{
 		CMDA_SHA1* psha1 = reinterpret_cast<CMDA_SHA1*>(pbase);
 		delete psha1;
-		pbase = nullptr;;
+		pbase = nullptr;
 	}
 }
 
-extern "C" MDA_EXT void CalcSHA1(const uint8_t* src, const uint64_t len, _MDAVALUE& val, const uint8_t* salt, const uint32_t saltlen)
+void CalcSHA1(const uint8_t* src, const uint64_t len, _MDAVALUE& val, const uint8_t* salt, const uint32_t saltlen)
 {
 	CMDA_SHA1* psha1 = new CMDA_SHA1();
 	psha1->init();
