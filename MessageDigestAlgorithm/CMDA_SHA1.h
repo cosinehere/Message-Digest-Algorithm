@@ -2,20 +2,6 @@
 
 #include "MDAdefines.h"
 
-constexpr uint32_t c_sha1initvar[] = { 0x67452301UL, 0xEFCDAB89UL, 0x98BADCFEUL, 0x10325476UL, 0xC3D2E1F0UL };
-
-inline uint32_t left_rotate(uint32_t a, uint32_t b)
-{
-	return (a << b) | (a >> (32 - b));
-}
-
-#define ROUND1(a,b,c,d,f,k) { f = ((b) & (c)) | ((~(b)) & (d)); k = 0x5A827999UL; }
-//#define ROUND1(a,b,c,d,f,k) { f = (d) ^ ((b) & ((c) ^ (d))); k = 0x5A827999UL; }	//Alternative
-#define ROUND2(a,b,c,d,f,k) { f = (b) ^ (c) ^ (d); k = 0x6ED9EBA1UL; }
-#define ROUND3(a,b,c,d,f,k) { f = ((b) & (c)) | ((b) & (d)) | ((c) & (d)); k = 0x8F1BBCDCUL; }
-//#define ROUND3(a,b,c,d,f,k) { f = ((b) & (c)) | ((d) & ((b) | (c))); k = 0x8F1BBCDCUL; }	//Alternative
-#define ROUND4(a,b,c,d,f,k) { f = (b) ^ (c) ^ (d); k = 0xCA62C1D6UL; }
-
 class CMDA_SHA1 :
 	public CMDA_Base
 {

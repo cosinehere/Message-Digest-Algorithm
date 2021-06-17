@@ -21,6 +21,8 @@ typedef unsigned long long uint64_t;
 constexpr uint32_t c_md5 = 65537;
 constexpr uint32_t c_sha1 = 65539;
 constexpr uint32_t c_sha2_256 = 65543;
+//constexpr uint32_t c_sha2_512 = ;
+//constexpr uint32_t c_sha3 = ;
 
 struct _MDAVALUE
 {
@@ -151,7 +153,9 @@ enum class enum_digest
 {
 	enum_digest_md5 = 0,
 	enum_digest_sha1,
-	enum_digest_sha2_256
+	enum_digest_sha2_256,
+	//enum_digest_sha2_512,
+	//enum_digest_sha3
 };
 
 void PreProcessVal(_MDAVALUE& val, enum_digest& digest);

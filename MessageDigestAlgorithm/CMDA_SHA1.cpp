@@ -1,6 +1,26 @@
 #include "pch.h"
 #include "CMDA_SHA1.h"
 
+constexpr uint32_t c_sha1initvar[] = { 0x67452301UL, 0xEFCDAB89UL, 0x98BADCFEUL, 0x10325476UL, 0xC3D2E1F0UL };
+
+inline uint32_t left_rotate(uint32_t a, uint32_t b) { return (a << b) | (a >> (32 - b)); }
+
+inline void ROUND1(uint32_t a, uint32_t b, uint32_t c, uint32_t d, uint32_t& f, uint32_t& k) {
+	f = ((b) & (c)) | ((~(b)) & (d)); k = 0x5A827999UL;
+}
+
+inline void ROUND2(uint32_t a, uint32_t b, uint32_t c, uint32_t d, uint32_t& f, uint32_t& k) {
+	f = (b) ^ (c) ^ (d); k = 0x6ED9EBA1UL;
+}
+
+inline void ROUND3(uint32_t a, uint32_t b, uint32_t c, uint32_t d, uint32_t& f, uint32_t& k) {
+	f = ((b) & (c)) | ((b) & (d)) | ((c) & (d)); k = 0x8F1BBCDCUL;
+}
+
+inline void ROUND4(uint32_t a, uint32_t b, uint32_t c, uint32_t d, uint32_t& f, uint32_t& k) {
+	f = (b) ^ (c) ^ (d); k = 0xCA62C1D6UL;
+}
+
 CMDA_SHA1::CMDA_SHA1()
 	: p_val(c_sha1initvar, 5)
 {
