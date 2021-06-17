@@ -8,7 +8,7 @@ CMDA_MD5::CMDA_MD5()
 	p_saltlen = 0;
 
 	buflen = 0;
-	totbits = 0;
+	totbytes = 0;
 }
 
 CMDA_MD5::~CMDA_MD5()
@@ -33,7 +33,7 @@ void CMDA_MD5::init()
 	}
 
 	buflen = 0;
-	totbits = 0;
+	totbytes = 0;
 }
 
 void CMDA_MD5::set_salt(const uint8_t* salt, const uint32_t len)
@@ -65,7 +65,7 @@ bool CMDA_MD5::update(const uint8_t* src, const uint64_t len)
 		}
 	}
 
-	totbits += len;
+	totbytes += len;
 
 	return true;
 }
@@ -77,13 +77,13 @@ bool CMDA_MD5::finish(_MDAVALUE& dst)
 		update(p_salt, p_saltlen);
 	}
 
-	uint64_t tot = totbits*8;
-	++totbits;
+	uint64_t totbits = totbytes << 3;
+	++totbytes;
 	buffer[buflen] = 0x80;
 	++buflen;
-	while ((totbits & 0xff) != 0x38)
+	while ((totbytes & 0x3f) != 0x38)
 	{
-		++totbits;
+		++totbytes;
 		buffer[buflen] = 0x00;
 		++buflen;
 
@@ -96,7 +96,7 @@ bool CMDA_MD5::finish(_MDAVALUE& dst)
 
 	for (int i = 0; i < 8; ++i)
 	{
-		buffer[buflen + i] = (tot >> (i * 8)) & 0xff;
+		buffer[buflen + i] = (totbits >> (i * 8)) & 0xff;
 	}
 	buflen += 8;
 

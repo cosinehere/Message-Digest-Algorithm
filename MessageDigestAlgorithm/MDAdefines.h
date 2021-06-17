@@ -59,13 +59,6 @@ struct _MDAVALUE
 		}
 	}
 
-// 	_MDAVALUE(const _MDAVALUE& o)
-// 	{
-// 		pval = new uint32_t[o.len];
-// 		memcpy_s(pval, sizeof(uint32_t)*o.len, o.pval, sizeof(uint32_t)*o.len);
-// 		len = o.len;
-// 	}
-
 	~_MDAVALUE()
 	{
 		clear();
@@ -145,3 +138,8 @@ extern "C" MDA_EXT void CalcMD5(const uint8_t* src, const uint64_t len, _MDAVALU
 extern "C" MDA_EXT void CreateSHA1(CMDA_Base*& pbase);
 extern "C" MDA_EXT void ReleaseSHA1(CMDA_Base*& pbase);
 extern "C" MDA_EXT void CalcSHA1(const uint8_t* src, const uint64_t len, _MDAVALUE& val, const uint8_t* salt, const uint32_t saltlen);
+
+extern "C" MDA_EXT void CreateSHA256(CMDA_Base*& pbase);
+extern "C" MDA_EXT void ReleaseSHA256(CMDA_Base*& pbase);
+extern "C" MDA_EXT void CalcSHA256(const uint8_t* src, const uint64_t len, _MDAVALUE& val, const uint8_t* salt, const uint32_t saltlen);
+

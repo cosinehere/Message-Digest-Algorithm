@@ -111,7 +111,7 @@ private:
 	uint8_t buffer[64];
 	uint64_t buflen;
 
-	uint64_t totbits;
+	uint64_t totbytes;
 
 	void transform();
 };

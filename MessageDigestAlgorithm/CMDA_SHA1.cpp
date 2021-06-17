@@ -8,7 +8,7 @@ CMDA_SHA1::CMDA_SHA1()
 	p_saltlen = 0;
 
 	buflen = 0;
-	totbits = 0;
+	totbytes = 0;
 }
 
 CMDA_SHA1::~CMDA_SHA1()
@@ -33,7 +33,7 @@ void CMDA_SHA1::init()
 	}
 
 	buflen = 0;
-	totbits = 0;
+	totbytes = 0;
 }
 
 void CMDA_SHA1::set_salt(const uint8_t * salt, const uint32_t len)
@@ -65,7 +65,7 @@ bool CMDA_SHA1::update(const uint8_t * src, const uint64_t len)
 		}
 	}
 
-	totbits += len;
+	totbytes += len;
 
 	return true;
 }
@@ -77,13 +77,13 @@ bool CMDA_SHA1::finish(_MDAVALUE & dst)
 		update(p_salt, p_saltlen);
 	}
 
-	uint64_t tot = totbits * 8;
-	++totbits;
+	uint64_t totbits = totbytes << 3;
+	++totbytes;
 	buffer[buflen] = 0x80;
 	++buflen;
-	while ((totbits & 0xff) != 0x38)
+	while ((totbytes & 0x3f) != 0x38)
 	{
-		++totbits;
+		++totbytes;
 		buffer[buflen] = 0x00;
 		++buflen;
 
@@ -96,7 +96,7 @@ bool CMDA_SHA1::finish(_MDAVALUE & dst)
 
 	for (int i = 0; i < 8; ++i)
 	{
-		buffer[buflen + i] = (tot >> (56 - i * 8)) & 0xff;
+		buffer[buflen + i] = (totbits >> (56 - i * 8)) & 0xff;
 	}
 	buflen += 8;
 
@@ -115,10 +115,13 @@ void CMDA_SHA1::transform()
 {
 	uint32_t word[80];
 	for (size_t j = 0; j < 16; ++j)
+	{
 		word[j] = buffer[4 * j + 0] << 24 | buffer[4 * j + 1] << 16 | buffer[4 * j + 2] << 8 | buffer[4 * j + 3];
-
+	}
 	for (size_t j = 16; j < 80; ++j)
-		word[j] = ROT_LEFT(word[j - 3] ^ word[j - 8] ^ word[j - 14] ^ word[j - 16], 1);
+	{
+		word[j] = left_rotate(word[j - 3] ^ word[j - 8] ^ word[j - 14] ^ word[j - 16], 1);
+	}
 
 	uint32_t a = p_val.pval[0], b = p_val.pval[1], c = p_val.pval[2], d = p_val.pval[3], e = p_val.pval[4];
 
@@ -127,29 +130,25 @@ void CMDA_SHA1::transform()
 		uint32_t f, k;
 		if (i < 20)
 		{
-			f = (b&c) | ((~b)&d);
-			k = 0x5A827999UL;
+			ROUND1(a, b, c, d, f, k);
 		}
 		else if (i < 40)
 		{
-			f = b ^ c ^ d;
-			k = 0x6ED9EBA1UL;
+			ROUND2(a, b, c, d, f, k);
 		}
 		else if (i < 60)
 		{
-			f = (b&c) | (b&d) | (c&d);
-			k = 0x8F1BBCDCUL;
+			ROUND3(a, b, c, d, f, k);
 		}
 		else
 		{
-			f = b ^ c ^ d;
-			k = 0xCA62C1D6UL;
+			ROUND4(a, b, c, d, f, k);
 		}
 
-		uint32_t tmp = ROT_LEFT(a, 5) + f + e + k + word[i];
+		uint32_t tmp = left_rotate(a, 5) + f + e + k + word[i];
 		e = d;
 		d = c;
-		c = ROT_LEFT(b, 30);
+		c = left_rotate(b, 30);
 		b = a;
 		a = tmp;
 	}
