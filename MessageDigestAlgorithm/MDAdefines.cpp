@@ -5,6 +5,9 @@
 #include <io.h>
 #include <string>
 #include <ctime>
+#include <set>
+
+#include "../../FileWithRingBuffer/FileWithRingBuffer/FileMap.h"
 
 #include "MDAdefines.h"
 
@@ -76,102 +79,156 @@ void PostProcessVal(enum_digest digest, _MDAVALUE& val)
 	}
 }
 
-bool PathDigest(const char* path, _MDAVALUE& val, const uint8_t * salt, const uint32_t saltlen)
+void FindFiles(const char* path, std::set<std::string>& files)
 {
-	enum_digest digest;
-	PreProcessVal(val, digest);
-
-	std::string format = std::string(path);
+	std::string format = path;
 	format.append("\\*");
 	struct _finddata_t info;
 	intptr_t hfile;
 	hfile = _findfirst(format.c_str(), &info);
 	if (hfile != -1)
 	{
-		CMDA_Base* base = nullptr;
-		switch (digest)
-		{
-		case enum_digest::enum_digest_md5: CreateMD5(base); break;
-		case enum_digest::enum_digest_sha1: CreateSHA1(base); break;
-		case enum_digest::enum_digest_sha2_256: CreateSHA256(base); break;
-		}
-		
 		do {
-			if (!(info.attrib&_A_SUBDIR))
+			if (info.attrib&_A_SUBDIR)
+			{
+				if (strcmp(info.name, ".") && strcmp(info.name, ".."))
+				{
+					std::string folder = path;
+					folder.append("\\");
+					folder.append(info.name);
+					FindFiles(folder.c_str(),files);
+				}
+			}
+			else
 			{
 				std::string fullpath = path;
 				fullpath.append("\\");
 				fullpath.append(info.name);
-				printf("%s\n", fullpath.c_str());
-
-				FILE* file = nullptr;
-				errno_t err = fopen_s(&file, fullpath.c_str(), "rb");
-				if (err == 0)
-				{
-					fseek(file, 0L, SEEK_SET);
-					uint8_t* buf = new uint8_t[info.size];
-					fread_s(buf, info.size, sizeof(uint8_t), info.size, file);
-					fclose(file);
-					base->update(buf, info.size);
-				}
+				files.insert(fullpath);
 			}
-		} while (_findnext(hfile, &info)==0);
+		} while (_findnext(hfile, &info) == 0);
 
-		base->finish(val);
-
-		switch (digest)
-		{
-		case enum_digest::enum_digest_md5: ReleaseMD5(base); break;
-		case enum_digest::enum_digest_sha1: ReleaseSHA1(base); break;
-		case enum_digest::enum_digest_sha2_256: ReleaseSHA256(base); break;
-		}
 		_findclose(hfile);
 	}
+}
+
+bool PathDigest(const char* path, _MDAVALUE& val, const uint8_t * salt, const uint32_t saltlen)
+{
+	DWORDLONG a = GetTickCount64();
+
+	enum_digest digest;
+	PreProcessVal(val, digest);
+
+	std::set<std::string> files;
+	files.clear();
+
+	FindFiles(path, files);
+
+	CMDA_Base* base = nullptr;
+	switch (digest)
+	{
+	case enum_digest::enum_digest_md5: CreateMD5(base); break;
+	case enum_digest::enum_digest_sha1: CreateSHA1(base); break;
+	case enum_digest::enum_digest_sha2_256: CreateSHA256(base); break;
+	}
+
+	for (auto it = files.begin(); it != files.end(); ++it)
+	{
+		FileMap::FileMap* filemap = new FileMap::FileMap;
+		if (filemap->Open(it->c_str(), 0))
+		{
+			uint8_t* buf = new uint8_t[1024 * 1024 * 16];
+			while (1)
+			{
+				DWORD dwrd = 1024 * 1024 * 16;
+				if(filemap->Read(buf, dwrd))
+				{
+					base->update(buf, dwrd);
+				}
+				else
+				{
+					//printf("break\n");
+					break;
+				}
+			}
+			filemap->Close();
+			delete buf;
+		}
+		delete filemap;
+	}
+
+	base->finish(val);
+
+	switch (digest)
+	{
+	case enum_digest::enum_digest_md5: ReleaseMD5(base); break;
+	case enum_digest::enum_digest_sha1: ReleaseSHA1(base); break;
+	case enum_digest::enum_digest_sha2_256: ReleaseSHA256(base); break;
+	}
+	
 
 	PostProcessVal(digest, val);
+
+	DWORDLONG b = GetTickCount64();
+	printf("cost %llu\n", b - a);
 	return true;
 }
 
 bool FileDigest(const char* path, _MDAVALUE& val, const uint8_t * salt, const uint32_t saltlen)
 {
+	DWORDLONG a = GetTickCount64();
+
 	enum_digest digest;
 	PreProcessVal(val, digest);
 
-	struct stat st;
-	stat(path, &st);
-	_off_t len = st.st_size;
-
-	FILE* file = nullptr;
-	errno_t err = fopen_s(&file, path, "rb");
-	if (err != 0)
+	CMDA_Base* base = nullptr;
+	switch (digest)
 	{
-		return false;
+	case enum_digest::enum_digest_md5: CreateMD5(base); break;
+	case enum_digest::enum_digest_sha1: CreateSHA1(base); break;
+	case enum_digest::enum_digest_sha2_256: CreateSHA256(base); break;
 	}
-	fseek(file, 0L, SEEK_SET);
-	uint8_t* buf = new uint8_t[len];
-	fread_s(buf, len, sizeof(uint8_t), len, file);
-	fclose(file);
+
+	FileMap::FileMap* filemap = new FileMap::FileMap;
+	if (filemap->Open(path, 0))
+	{
+		uint8_t* buf = new uint8_t[1024 * 1024 * 16];
+		while (1)
+		{
+			DWORD dwrd = 1024 * 1024 * 16;
+			if(filemap->Read(buf, dwrd))
+			{
+				base->update(buf, dwrd);
+			}
+			else
+			{
+				break;
+			}
+		}
+		filemap->Close();
+		delete buf;
+	}
+	delete filemap;
+	base->finish(val);
 
 	switch (digest)
 	{
-	case enum_digest::enum_digest_md5:
-		CalcMD5(buf, len, val, salt, saltlen);
-		break;
-	case enum_digest::enum_digest_sha1:
-		CalcSHA1(buf, len, val, salt, saltlen);
-		break;
-	case enum_digest::enum_digest_sha2_256:
-		CalcSHA256(buf, len, val, salt, saltlen);
-		break;
-	default: break;
+	case enum_digest::enum_digest_md5: ReleaseMD5(base); break;
+	case enum_digest::enum_digest_sha1: ReleaseSHA1(base); break;
+	case enum_digest::enum_digest_sha2_256: ReleaseSHA256(base); break;
 	}
 
 	PostProcessVal(digest, val);
+
+	DWORDLONG b = GetTickCount64();
+	printf("cost %llu\n", b - a);
 	return true;
 }
 
 bool Digest(const uint8_t* src, const uint64_t len, _MDAVALUE& val, const uint8_t* salt, const uint32_t saltlen)
 {
+	DWORDLONG a = GetTickCount64();
+
 	enum_digest digest;
 	PreProcessVal(val, digest);
 
@@ -190,5 +247,8 @@ bool Digest(const uint8_t* src, const uint64_t len, _MDAVALUE& val, const uint8_
 	}
 
 	PostProcessVal(digest, val);
+
+	DWORDLONG b = GetTickCount64();
+	printf("cost %llu\n", b - a);
 	return true;
 }

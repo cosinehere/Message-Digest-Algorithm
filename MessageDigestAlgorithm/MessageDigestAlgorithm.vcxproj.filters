@@ -33,6 +33,15 @@
     <ClInclude Include="CMDA_SHA256.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\FileWithRingBuffer\FileWithRingBuffer\FileMap.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\FileWithRingBuffer\FileWithRingBuffer\Mutex.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\FileWithRingBuffer\FileWithRingBuffer\RingBuffer.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp">
@@ -51,6 +60,9 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="MDAdefines.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\FileWithRingBuffer\FileWithRingBuffer\FileMap.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

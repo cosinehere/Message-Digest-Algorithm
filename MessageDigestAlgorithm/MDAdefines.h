@@ -161,6 +161,6 @@ enum class enum_digest
 void PreProcessVal(_MDAVALUE& val, enum_digest& digest);
 void PostProcessVal(enum_digest digest, _MDAVALUE& val);
 
-extern "C" MDA_EXT bool PathDigest(const char* path, _MDAVALUE& val, const uint8_t * salt, const uint32_t saltlen);
-extern "C" MDA_EXT bool FileDigest(const char* path, _MDAVALUE& val, const uint8_t * salt, const uint32_t saltlen);
+extern "C" MDA_EXT bool PathDigest(const char* path, _MDAVALUE& val, const uint8_t* salt, const uint32_t saltlen);
+extern "C" MDA_EXT bool FileDigest(const char* path, _MDAVALUE& val, const uint8_t* salt, const uint32_t saltlen);
 extern "C" MDA_EXT bool Digest(const uint8_t* src, const uint64_t len, _MDAVALUE& val, const uint8_t* salt, const uint32_t saltlen);
