@@ -12,9 +12,9 @@ int main()
 	_MDAVALUE val;
 	uint8_t salt[4] = { "123" };
 
-	Digest(s, 70, val, nullptr, 0);
+	//Digest(s, 70, val, nullptr, 0);
 	//FileDigest("J:\\迅雷下载\\cn_windows_7_professional_with_sp1_vl_build_x86_dvd_u_677939.iso", val, nullptr, 0);
-	//FileDigest("L:\\Users\\Administrator\\Downloads\\DXSDK_Aug09.exe", val, nullptr, 0);
+	FileDigest("L:\\Users\\Administrator\\Downloads\\DXSDK_Aug09.exe", val, nullptr, 0);
 	//PathDigest("E:\\src_3.5_win7_2021_V1.07a\\_Release", val, nullptr, 0);
 	//PathDigest("E:\\test", val, nullptr, 0);
 

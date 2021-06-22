@@ -7,7 +7,7 @@
 #include <ctime>
 #include <set>
 
-#include "../../FileWithRingBuffer/FileWithRingBuffer/FileMap.h"
+#include "FileMap.h"
 
 #include "MDAdefines.h"
 
@@ -156,24 +156,14 @@ bool PathDigest(const char* path, _MDAVALUE& val, const uint8_t* salt, const siz
 	for (auto it = files.begin(); it != files.end(); ++it)
 	{
 		FileMap::FileMap* filemap = new FileMap::FileMap;
-		if (filemap->Open(it->c_str(), 0))
+		if (filemap->Open(it->c_str()))
 		{
 			++cnt;
-			uint8_t* buf = new uint8_t[1024 * 1024 * 16];
-			while (1)
+			while (filemap->Remap())
 			{
-				DWORD dwrd = 1024 * 1024 * 16;
-				if(filemap->Read(buf, dwrd))
-				{
-					base->update(buf, dwrd);
-				}
-				else
-				{
-					break;
-				}
+				base->update(reinterpret_cast<uint8_t*>(filemap->GetBuffer()), filemap->GetLength());
 			}
 			filemap->Close();
-			delete buf;
 		}
 		delete filemap;
 	}
@@ -213,23 +203,13 @@ bool FileDigest(const char* path, _MDAVALUE& val, const uint8_t * salt, const si
 	}
 
 	FileMap::FileMap* filemap = new FileMap::FileMap;
-	if (filemap->Open(path, 0))
+	if (filemap->Open(path))
 	{
-		uint8_t* buf = new uint8_t[1024 * 1024 * 16];
-		while (1)
+		while (filemap->Remap())
 		{
-			DWORD dwrd = 1024 * 1024 * 16;
-			if(filemap->Read(buf, dwrd))
-			{
-				base->update(buf, dwrd);
-			}
-			else
-			{
-				break;
-			}
+			base->update(reinterpret_cast<uint8_t*>(filemap->GetBuffer()), filemap->GetLength());
 		}
 		filemap->Close();
-		delete buf;
 	}
 	delete filemap;
 	base->finish(val);
