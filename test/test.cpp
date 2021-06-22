@@ -12,10 +12,11 @@ int main()
 	_MDAVALUE val;
 	uint8_t salt[4] = { "123" };
 
-	//Digest(s, 70, val, nullptr, 0);
+	Digest(s, 70, val, nullptr, 0);
 	//FileDigest("J:\\迅雷下载\\cn_windows_7_professional_with_sp1_vl_build_x86_dvd_u_677939.iso", val, nullptr, 0);
 	//FileDigest("L:\\Users\\Administrator\\Downloads\\DXSDK_Aug09.exe", val, nullptr, 0);
-	PathDigest("E:\\src_3.5_win7_2021_V1.07a\\_Release", val, nullptr, 0);
+	//PathDigest("E:\\src_3.5_win7_2021_V1.07a\\_Release", val, nullptr, 0);
+	//PathDigest("E:\\test", val, nullptr, 0);
 
 	if (val.pval[16] % c_md5 == 0)
 	{
@@ -23,21 +24,22 @@ int main()
 		char table[] = "0123456789abcdef";
 		for (int a = 0; a < 17; ++a)
 		{
-			int b;
-			std::string str1;
-			std::string out = "";
-			for (int i = 0; i < 4; ++i)
-			{
-				str1 = "";
-				b = ((val.pval[a] >> i * 8) % (1 << 8)) & 0xff;
-				for (int j = 0; j < 2; ++j)
-				{
-					str1.insert(0, 1, table[b % 16]);
-					b /= 16;
-				}
-				out += str1;
-			}
-			printf("%s\n", out.c_str());
+			//int b;
+			//std::string str1;
+			//std::string out = "";
+			//for (int i = 0; i < 4; ++i)
+			//{
+			//	str1 = "";
+			//	b = ((val.pval[a] >> i * 8) % (1 << 8)) & 0xff;
+			//	for (int j = 0; j < 2; ++j)
+			//	{
+			//		str1.insert(0, 1, table[b % 16]);
+			//		b /= 16;
+			//	}
+			//	out += str1;
+			//}
+			//printf("%s\n", out.c_str());
+			printf("%08x\n", val.pval[a]);
 		}
 		printf("\n");
 	}
@@ -46,38 +48,25 @@ int main()
 		printf("SHA1\n");
 		for (int i = 0; i < 17; ++i)
 		{
-			std::string str;
-			str.clear();
-			uint32_t x = val.pval[i];
-			while (x != 0)
-			{
-				uint8_t a = x & 0xff;
-				x >>= 8;
-				char ch[5] = { 0 };
-				sprintf_s(ch, "%02x", a);
-				str = ch + str;
-			}
-			printf("%s\n", str.c_str());
+			printf("%08x\n", val.pval[i]);
 		}
 		printf("\n");
 	}
 	else if (val.pval[16] % c_sha2_256 == 0)
 	{
-		printf("SHA1_256\n");
+		printf("SHA2_256\n");
 		for (int i = 0; i < 17; ++i)
 		{
-			std::string str;
-			str.clear();
-			uint32_t x = val.pval[i];
-			while (x != 0)
-			{
-				uint8_t a = x & 0xff;
-				x >>= 8;
-				char ch[5] = { 0 };
-				sprintf_s(ch, "%02x", a);
-				str = ch + str;
-			}
-			printf("%s\n", str.c_str());
+			printf("%08x\n", val.pval[i]);
+		}
+		printf("\n");
+	}
+	else if(val.pval[16]%c_sha2_512==0)
+	{
+		printf("SHA2_512\n");
+		for (int i = 0; i < 17; i+=2)
+		{
+			printf("%08x %08x\n", val.pval[i + 1],val.pval[i]);
 		}
 		printf("\n");
 	}

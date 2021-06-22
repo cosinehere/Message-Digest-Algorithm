@@ -161,6 +161,7 @@
     <ClInclude Include="CMDA_MD5.h" />
     <ClInclude Include="CMDA_SHA1.h" />
     <ClInclude Include="CMDA_SHA256.h" />
+    <ClInclude Include="CMDA_SHA512.h" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="MDAdefines.h" />
     <ClInclude Include="pch.h" />
@@ -173,6 +174,7 @@
     <ClCompile Include="CMDA_MD5.cpp" />
     <ClCompile Include="CMDA_SHA1.cpp" />
     <ClCompile Include="CMDA_SHA256.cpp" />
+    <ClCompile Include="CMDA_SHA512.cpp" />
     <ClCompile Include="dllmain.cpp" />
     <ClCompile Include="MDAdefines.cpp" />
     <ClCompile Include="pch.cpp">

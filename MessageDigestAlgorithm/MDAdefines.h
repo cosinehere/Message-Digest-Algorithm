@@ -21,13 +21,25 @@ typedef unsigned long long uint64_t;
 constexpr uint32_t c_md5 = 65537;
 constexpr uint32_t c_sha1 = 65539;
 constexpr uint32_t c_sha2_256 = 65543;
-//constexpr uint32_t c_sha2_512 = ;
-//constexpr uint32_t c_sha3 = ;
+constexpr uint32_t c_sha2_512 = 65551;
+//constexpr uint32_t c_sha3 = 65557;
+
+template <typename T>
+inline T l_rot(T a, T b)
+{
+	return (a << b) | (a >> (sizeof(T) * 8 - b));
+}
+
+template <typename T>
+inline T r_rot(T a, T b)
+{
+	return (a >> b) | (a << (sizeof(T) * 8 - b));
+}
 
 struct _MDAVALUE
 {
 	uint32_t* pval;
-	uint32_t len;
+	size_t len;
 
 	_MDAVALUE()
 	{
@@ -35,7 +47,7 @@ struct _MDAVALUE
 		len = 0;
 	}
 
-	_MDAVALUE(const uint32_t l)
+	_MDAVALUE(const size_t l)
 	{
 		if (l == 0)
 		{
@@ -50,7 +62,7 @@ struct _MDAVALUE
 		}
 	}
 
-	_MDAVALUE(const uint32_t* val, const uint32_t l)
+	_MDAVALUE(const uint32_t* val, const size_t l)
 	{
 		if (val == nullptr || l == 0)
 		{
@@ -80,7 +92,7 @@ struct _MDAVALUE
 		}
 	}
 
-	void init(const uint32_t l)
+	void init(const size_t l)
 	{
 		clear();
 
@@ -92,7 +104,7 @@ struct _MDAVALUE
 		}
 	}
 
-	void init(const uint32_t* val, const uint32_t l)
+	void init(const uint32_t* val, const size_t l)
 	{
 		clear();
 
@@ -132,35 +144,41 @@ public:
 	CMDA_Base& operator=(const CMDA_Base&&) = delete;
 
 	virtual void init() = 0;
-	virtual void set_salt(const uint8_t* salt, const uint32_t len) = 0;
-	virtual bool update(const uint8_t* src, const uint64_t len) = 0;
+	virtual void set_salt(const uint8_t* salt, const size_t len) = 0;
+	virtual bool update(const uint8_t* src, const size_t len) = 0;
 	virtual bool finish(_MDAVALUE& dst) = 0;
 };
 
 void CreateMD5(CMDA_Base*& pbase);
 void ReleaseMD5(CMDA_Base*& pbase);
-void CalcMD5(const uint8_t* src, const uint64_t len, _MDAVALUE& val, const uint8_t* salt, const uint32_t saltlen);
+void CalcMD5(const uint8_t* src, const size_t len, _MDAVALUE& val, const uint8_t* salt, const size_t saltlen);
 
 void CreateSHA1(CMDA_Base*& pbase);
 void ReleaseSHA1(CMDA_Base*& pbase);
-void CalcSHA1(const uint8_t* src, const uint64_t len, _MDAVALUE& val, const uint8_t* salt, const uint32_t saltlen);
+void CalcSHA1(const uint8_t* src, const size_t len, _MDAVALUE& val, const uint8_t* salt, const size_t saltlen);
 
 void CreateSHA256(CMDA_Base*& pbase);
 void ReleaseSHA256(CMDA_Base*& pbase);
-void CalcSHA256(const uint8_t* src, const uint64_t len, _MDAVALUE& val, const uint8_t* salt, const uint32_t saltlen);
+void CalcSHA256(const uint8_t* src, const size_t len, _MDAVALUE& val, const uint8_t* salt, const size_t saltlen);
+
+void CreateSHA512(CMDA_Base*& pbase);
+void ReleaseSHA512(CMDA_Base*& pbase);
+void CalcSHA512(const uint8_t* src, const size_t len, _MDAVALUE& val, const uint8_t* salt, const size_t saltlen);
 
 enum class enum_digest
 {
 	enum_digest_md5 = 0,
 	enum_digest_sha1,
 	enum_digest_sha2_256,
-	//enum_digest_sha2_512,
+	enum_digest_sha2_512,
 	//enum_digest_sha3
+
+	enum_digest_num
 };
 
 void PreProcessVal(_MDAVALUE& val, enum_digest& digest);
 void PostProcessVal(enum_digest digest, _MDAVALUE& val);
 
-extern "C" MDA_EXT bool PathDigest(const char* path, _MDAVALUE& val, const uint8_t* salt, const uint32_t saltlen);
-extern "C" MDA_EXT bool FileDigest(const char* path, _MDAVALUE& val, const uint8_t* salt, const uint32_t saltlen);
-extern "C" MDA_EXT bool Digest(const uint8_t* src, const uint64_t len, _MDAVALUE& val, const uint8_t* salt, const uint32_t saltlen);
+extern "C" MDA_EXT bool PathDigest(const char* path, _MDAVALUE& val, const uint8_t* salt, const size_t saltlen);
+extern "C" MDA_EXT bool FileDigest(const char* path, _MDAVALUE& val, const uint8_t* salt, const size_t saltlen);
+extern "C" MDA_EXT bool Digest(const uint8_t* src, const size_t len, _MDAVALUE& val, const uint8_t* salt, const size_t saltlen);

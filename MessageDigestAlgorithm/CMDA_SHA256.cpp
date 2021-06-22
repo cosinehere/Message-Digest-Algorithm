@@ -1,10 +1,10 @@
 #include "pch.h"
 #include "CMDA_SHA256.h"
 
+#define RROT(a,b) r_rot<uint32_t>(a,b)
+
 constexpr uint32_t c_sha256initvar[] = 
 	{ 0x6a09e667UL, 0xbb67ae85UL, 0x3c6ef372UL, 0xa54ff53aUL, 0x510e527fUL, 0x9b05688cUL, 0x1f83d9abUL, 0x5be0cd19UL };
-
-inline uint32_t right_rotate(uint32_t a, uint32_t b) { return (a >> b) | (a << (32 - b)); }
 
 constexpr uint32_t k[] = 
 {
@@ -53,7 +53,7 @@ void CMDA_SHA256::init()
 	totbytes = 0;
 }
 
-void CMDA_SHA256::set_salt(const uint8_t * salt, const uint32_t len)
+void CMDA_SHA256::set_salt(const uint8_t* salt, const size_t len)
 {
 	if (p_salt != nullptr)
 	{
@@ -65,12 +65,12 @@ void CMDA_SHA256::set_salt(const uint8_t * salt, const uint32_t len)
 	p_saltlen = len;
 }
 
-bool CMDA_SHA256::update(const uint8_t * src, const uint64_t len)
+bool CMDA_SHA256::update(const uint8_t* src, const size_t len)
 {
-	uint64_t cnt = 0;
+	size_t cnt = 0;
 	while (cnt < len)
 	{
-		uint64_t bufleft = (len - cnt > 64 - buflen) ? (64 - buflen) : (len - cnt);
+		size_t bufleft = (len - cnt > 64 - buflen) ? (64 - buflen) : (len - cnt);
 		memcpy_s(&buffer[buflen], (rsize_t)bufleft * sizeof(uint8_t), src + cnt, (rsize_t)bufleft * sizeof(uint8_t));
 		cnt += bufleft;
 		buflen += bufleft;
@@ -137,8 +137,8 @@ void CMDA_SHA256::transform()
 	}
 	for (size_t j = 16; j < 64; ++j)
 	{
-		uint32_t s0 = right_rotate(word[j - 15], 7) ^ right_rotate(word[j - 15], 18) ^ (word[j - 15] >> 3);
-		uint32_t s1 = right_rotate(word[j - 2], 17) ^ right_rotate(word[j - 2], 19) ^ (word[j - 2] >> 10);
+		uint32_t s0 = RROT(word[j - 15], 7) ^ RROT(word[j - 15], 18) ^ (word[j - 15] >> 3);
+		uint32_t s1 = RROT(word[j - 2], 17) ^ RROT(word[j - 2], 19) ^ (word[j - 2] >> 10);
 		word[j] = word[j - 16] + s0 + word[j - 7] + s1;
 	}
 
@@ -146,10 +146,10 @@ void CMDA_SHA256::transform()
 
 	for (int i = 0; i < 64; ++i)
 	{
-		uint32_t s0 = right_rotate(a, 2) ^ right_rotate(a, 13) ^ right_rotate(a, 22);
+		uint32_t s0 = RROT(a, 2) ^ RROT(a, 13) ^ RROT(a, 22);
 		uint32_t maj = (a&b) ^ (a&c) ^ (b&c);
 		uint32_t t2 = s0 + maj;
-		uint32_t s1 = right_rotate(e, 6) ^ right_rotate(e, 11) ^ right_rotate(e, 25);
+		uint32_t s1 = RROT(e, 6) ^ RROT(e, 11) ^ RROT(e, 25);
 		uint32_t ch = (e&f) ^ ((~e)&g);
 		uint32_t t1 = h + s1 + ch + k[i] + word[i];
 		h = g;
@@ -187,7 +187,7 @@ void ReleaseSHA256(CMDA_Base*& pbase)
 	}
 }
 
-void CalcSHA256(const uint8_t* src, const uint64_t len, _MDAVALUE& val, const uint8_t* salt, const uint32_t saltlen)
+void CalcSHA256(const uint8_t* src, const size_t len, _MDAVALUE& val, const uint8_t* salt, const size_t saltlen)
 {
 	CMDA_SHA256* psha256 = new CMDA_SHA256();
 	psha256->init();

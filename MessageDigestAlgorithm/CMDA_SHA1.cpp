@@ -3,7 +3,7 @@
 
 constexpr uint32_t c_sha1initvar[] = { 0x67452301UL, 0xEFCDAB89UL, 0x98BADCFEUL, 0x10325476UL, 0xC3D2E1F0UL };
 
-inline uint32_t left_rotate(uint32_t a, uint32_t b) { return (a << b) | (a >> (32 - b)); }
+//inline uint32_t left_rotate(uint32_t a, uint32_t b) { return (a << b) | (a >> (32 - b)); }
 
 inline void ROUND1(uint32_t a, uint32_t b, uint32_t c, uint32_t d, uint32_t& f, uint32_t& k) {
 	f = ((b) & (c)) | ((~(b)) & (d)); k = 0x5A827999UL;
@@ -56,7 +56,7 @@ void CMDA_SHA1::init()
 	totbytes = 0;
 }
 
-void CMDA_SHA1::set_salt(const uint8_t * salt, const uint32_t len)
+void CMDA_SHA1::set_salt(const uint8_t* salt, const size_t len)
 {
 	if (p_salt != nullptr)
 	{
@@ -68,12 +68,12 @@ void CMDA_SHA1::set_salt(const uint8_t * salt, const uint32_t len)
 	p_saltlen = len;
 }
 
-bool CMDA_SHA1::update(const uint8_t * src, const uint64_t len)
+bool CMDA_SHA1::update(const uint8_t* src, const size_t len)
 {
-	uint64_t cnt = 0;
+	size_t cnt = 0;
 	while (cnt < len)
 	{
-		uint64_t bufleft = (len - cnt > 64 - buflen) ? (64 - buflen) : (len - cnt);
+		size_t bufleft = (len - cnt > 64 - buflen) ? (64 - buflen) : (len - cnt);
 		memcpy_s(&buffer[buflen], (rsize_t)bufleft * sizeof(uint8_t), src + cnt, (rsize_t)bufleft * sizeof(uint8_t));
 		cnt += bufleft;
 		buflen += bufleft;
@@ -140,7 +140,7 @@ void CMDA_SHA1::transform()
 	}
 	for (size_t j = 16; j < 80; ++j)
 	{
-		word[j] = left_rotate(word[j - 3] ^ word[j - 8] ^ word[j - 14] ^ word[j - 16], 1);
+		word[j] = /*left_rotate*/l_rot<uint32_t>(word[j - 3] ^ word[j - 8] ^ word[j - 14] ^ word[j - 16], 1);
 	}
 
 	uint32_t a = p_val.pval[0], b = p_val.pval[1], c = p_val.pval[2], d = p_val.pval[3], e = p_val.pval[4];
@@ -165,10 +165,10 @@ void CMDA_SHA1::transform()
 			ROUND4(a, b, c, d, f, k);
 		}
 
-		uint32_t tmp = left_rotate(a, 5) + f + e + k + word[i];
+		uint32_t tmp = /*left_rotate*/l_rot<uint32_t>(a, 5) + f + e + k + word[i];
 		e = d;
 		d = c;
-		c = left_rotate(b, 30);
+		c = /*left_rotate*/l_rot<uint32_t>(b, 30);
 		b = a;
 		a = tmp;
 	}
@@ -195,7 +195,7 @@ void ReleaseSHA1(CMDA_Base*& pbase)
 	}
 }
 
-void CalcSHA1(const uint8_t* src, const uint64_t len, _MDAVALUE& val, const uint8_t* salt, const uint32_t saltlen)
+void CalcSHA1(const uint8_t* src, const size_t len, _MDAVALUE& val, const uint8_t* salt, const size_t saltlen)
 {
 	CMDA_SHA1* psha1 = new CMDA_SHA1();
 	psha1->init();

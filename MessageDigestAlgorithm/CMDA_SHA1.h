@@ -9,19 +9,19 @@ public:
 	CMDA_SHA1();
 	~CMDA_SHA1();
 
-	virtual void init();
-	virtual void set_salt(const uint8_t* salt, const uint32_t len);
-	virtual bool update(const uint8_t* src, const uint64_t len);
-	virtual bool finish(_MDAVALUE& dst);
+	virtual void init() override;
+	virtual void set_salt(const uint8_t* salt, const size_t len) override;
+	virtual bool update(const uint8_t* src, const size_t len) override;
+	virtual bool finish(_MDAVALUE& dst) override;
 
 private:
 	_MDAVALUE p_val;
 
 	uint8_t* p_salt;
-	uint32_t p_saltlen;
+	size_t p_saltlen;
 
 	uint8_t buffer[64];
-	uint64_t buflen;
+	size_t buflen;
 
 	uint64_t totbytes;
 

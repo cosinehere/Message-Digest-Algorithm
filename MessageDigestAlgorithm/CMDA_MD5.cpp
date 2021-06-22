@@ -1,6 +1,8 @@
 #include "pch.h"
 #include "CMDA_MD5.h"
 
+#define LROT(a,b) l_rot<uint32_t>(a,b)
+
 constexpr uint32_t c_md5initvar[] = { 0x67452301UL, 0xEFCDAB89UL, 0x98BADCFEUL, 0x10325476UL };
 
 inline uint32_t F(uint32_t x, uint32_t y, uint32_t z) { return (x & y) | ((~x) & z); }
@@ -9,16 +11,16 @@ inline uint32_t H(uint32_t x, uint32_t y, uint32_t z) { return x ^ y ^ z; }
 inline uint32_t I(uint32_t x, uint32_t y, uint32_t z) { return y ^ (x | (~z)); }
 
 inline void FF(uint32_t& a, uint32_t& b, uint32_t& c, uint32_t& d, uint32_t Mj, uint32_t s, uint32_t ti) {
-	a += F(b, c, d) + Mj + ti; a = (a << s) | (a >> (32 - s)); a += b;
+	a += F(b, c, d) + Mj + ti; a = LROT(a, s); a += b;
 }
 inline void GG(uint32_t& a, uint32_t& b, uint32_t& c, uint32_t& d, uint32_t Mj, uint32_t s, uint32_t ti) {
-	a += G(b, c, d) + Mj + ti; a = (a << s) | (a >> (32 - s)); a += b;
+	a += G(b, c, d) + Mj + ti; a = LROT(a, s); a += b;
 }
 inline void HH(uint32_t& a, uint32_t& b, uint32_t& c, uint32_t& d, uint32_t Mj, uint32_t s, uint32_t ti) {
-	a += H(b, c, d) + Mj + ti; a = (a << s) | (a >> (32 - s)); a += b;
+	a += H(b, c, d) + Mj + ti; a = LROT(a, s); a += b;
 }
 inline void II(uint32_t& a, uint32_t& b, uint32_t& c, uint32_t& d, uint32_t Mj, uint32_t s, uint32_t ti) {
-	a += I(b, c, d) + Mj + ti; a = (a << s) | (a >> (32 - s)); a += b;
+	a += I(b, c, d) + Mj + ti; a = LROT(a, s); a += b;
 }
 
 inline void ROUND1(uint32_t& a, uint32_t& b, uint32_t& c, uint32_t& d, uint32_t* M)
@@ -136,7 +138,7 @@ void CMDA_MD5::init()
 	totbytes = 0;
 }
 
-void CMDA_MD5::set_salt(const uint8_t* salt, const uint32_t len)
+void CMDA_MD5::set_salt(const uint8_t* salt, const size_t len)
 {
 	if (p_salt != nullptr)
 	{
@@ -148,12 +150,12 @@ void CMDA_MD5::set_salt(const uint8_t* salt, const uint32_t len)
 	p_saltlen = len;
 }
 
-bool CMDA_MD5::update(const uint8_t* src, const uint64_t len)
+bool CMDA_MD5::update(const uint8_t* src, const size_t len)
 {
-	uint64_t cnt = 0;
+	size_t cnt = 0;
 	while (cnt < len)
 	{
-		uint64_t bufleft = (len - cnt > 64 - buflen) ? (64 - buflen) : (len - cnt);
+		size_t bufleft = (len - cnt > 64 - buflen) ? (64 - buflen) : (len - cnt);
 		memcpy_s(&buffer[buflen], (rsize_t)bufleft * sizeof(uint8_t), src + cnt, (rsize_t)bufleft * sizeof(uint8_t));
 		cnt += bufleft;
 		buflen += bufleft;
@@ -242,7 +244,7 @@ void ReleaseMD5(CMDA_Base*& pbase)
 	}
 }
 
-void CalcMD5(const uint8_t* src, const uint64_t len, _MDAVALUE& val, const uint8_t* salt, const uint32_t saltlen)
+void CalcMD5(const uint8_t* src, const size_t len, _MDAVALUE& val, const uint8_t* salt, const size_t saltlen)
 {
 	CMDA_MD5* pmd5 = new CMDA_MD5();
 	pmd5->init();
