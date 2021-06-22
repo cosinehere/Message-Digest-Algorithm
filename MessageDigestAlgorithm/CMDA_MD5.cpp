@@ -215,7 +215,7 @@ bool CMDA_MD5::finish(_MDAVALUE& dst)
 
 void CMDA_MD5::transform()
 {
-	uint32_t a = p_val.pval[0], b = p_val.pval[1], c = p_val.pval[2], d = p_val.pval[3];
+	uint32_t a = p_val.val[0], b = p_val.val[1], c = p_val.val[2], d = p_val.val[3];
 	uint32_t* pbuf = reinterpret_cast<uint32_t*>(buffer);
 
 	ROUND1(a, b, c, d, pbuf);
@@ -223,10 +223,10 @@ void CMDA_MD5::transform()
 	ROUND3(a, b, c, d, pbuf);
 	ROUND4(a, b, c, d, pbuf);
 
-	p_val.pval[0] += a;
-	p_val.pval[1] += b;
-	p_val.pval[2] += c;
-	p_val.pval[3] += d;
+	p_val.val[0] += a;
+	p_val.val[1] += b;
+	p_val.val[2] += c;
+	p_val.val[3] += d;
 }
 
 void CreateMD5(CMDA_Base*& pbase)

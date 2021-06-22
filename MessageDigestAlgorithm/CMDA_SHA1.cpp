@@ -143,7 +143,7 @@ void CMDA_SHA1::transform()
 		word[j] = LROT(word[j - 3] ^ word[j - 8] ^ word[j - 14] ^ word[j - 16], 1);
 	}
 
-	uint32_t a = p_val.pval[0], b = p_val.pval[1], c = p_val.pval[2], d = p_val.pval[3], e = p_val.pval[4];
+	uint32_t a = p_val.val[0], b = p_val.val[1], c = p_val.val[2], d = p_val.val[3], e = p_val.val[4];
 
 	for (int i = 0; i < 80; ++i)
 	{
@@ -173,11 +173,11 @@ void CMDA_SHA1::transform()
 		a = tmp;
 	}
 
-	p_val.pval[0] += a;
-	p_val.pval[1] += b;
-	p_val.pval[2] += c;
-	p_val.pval[3] += d;
-	p_val.pval[4] += e;
+	p_val.val[0] += a;
+	p_val.val[1] += b;
+	p_val.val[2] += c;
+	p_val.val[3] += d;
+	p_val.val[4] += e;
 }
 
 void CreateSHA1(CMDA_Base*& pbase)

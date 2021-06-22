@@ -164,7 +164,7 @@ void CMDA_SHA512::transform()
 		word[j] = word[j - 16] + s0 + word[j - 7] + s1;
 	}
 
-	uint64_t* p = reinterpret_cast<uint64_t*>(p_val.pval);
+	uint64_t* p = reinterpret_cast<uint64_t*>(p_val.val);
 	uint64_t a = p[0], b = p[1], c = p[2], d = p[3], e = p[4], f = p[5], g = p[6], h = p[7];
 
 	for (size_t i = 0; i < 80; ++i)

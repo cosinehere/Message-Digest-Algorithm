@@ -2,8 +2,6 @@
 
 #include "FileMap.h"
 
-#include <process.h>
-
 namespace FileMap {
 
 FileMap::FileMap()

@@ -1,28 +1,115 @@
 #pragma once
 
 #ifdef _MDADLL_EXPORT_
-#define MDA_EXT _declspec(dllexport)
+	#define MDA_EXT _declspec(dllexport)
 #else
-#define MDA_EXT _declspec(dllimport)
+	#define MDA_EXT _declspec(dllimport)
 #endif
 
 #include <stdint.h>
 #ifndef _STDINT
-typedef signed char        int8_t;
-typedef short              int16_t;
-typedef int                int32_t;
-typedef long long          int64_t;
-typedef unsigned char      uint8_t;
-typedef unsigned short     uint16_t;
-typedef unsigned int       uint32_t;
-typedef unsigned long long uint64_t;
+#define _STDINT
+typedef char				int8_t;
+typedef short				int16_t;
+typedef int					int32_t;
+typedef __int64				int64_t;
+typedef unsigned char		uint8_t;
+typedef unsigned short		uint16_t;
+typedef unsigned int		uint32_t;
+typedef unsigned __int64	uint64_t;
 #endif // ifndef _STDINT
 
-constexpr uint32_t c_md5 = 65537;
-constexpr uint32_t c_sha1 = 65539;
-constexpr uint32_t c_sha2_256 = 65543;
-constexpr uint32_t c_sha2_512 = 65551;
-//constexpr uint32_t c_sha3 = 65557;
+#if (!defined(_MSC_VER) && __cplusplus < 201103L) || (defined(_MSC_VER) && _MSC_VER < 1900)   // C++11 is not supported.
+	#define nullptr  NULL
+	#define override
+#endif
+
+struct _MDAVALUE
+{
+	uint32_t val[17];
+	size_t len;
+
+	_MDAVALUE()
+	{
+		memset(val, 0, sizeof(val));
+		len = 0;
+	}
+
+	_MDAVALUE(const uint32_t* v, const size_t l)
+	{
+		if (v == nullptr || l == 0)
+		{
+			len = 0;
+		}
+		else
+		{
+			len = (l > 17) ? 17 : l;
+			memcpy_s(val, sizeof(uint32_t)*len, v, sizeof(uint32_t)*len);
+		}
+	}
+
+	void init(const uint32_t* v, const size_t l)
+	{
+		if (v != nullptr && l != 0)
+		{
+			len = (l > 17) ? 17 : l;
+			memcpy_s(val, sizeof(uint32_t)*len, v, sizeof(uint32_t)*len);
+		}
+	}
+
+	_MDAVALUE& operator=(const _MDAVALUE& o)
+	{
+		init(o.val, o.len);
+		return *this;
+	}
+
+	bool operator==(const _MDAVALUE& o) const
+	{
+		if (len != o.len)
+		{
+			return false;
+		}
+
+		return (memcmp(val, o.val, sizeof(uint32_t)*len)==0);
+	}
+};
+
+class CMDA_Base
+{
+public:
+	virtual void init() = 0;
+	virtual void set_salt(const uint8_t* salt, const size_t len) = 0;
+	virtual bool update(const uint8_t* src, const size_t len) = 0;
+	virtual bool finish(_MDAVALUE& dst) = 0;
+
+	virtual ~CMDA_Base() = default;
+};
+
+enum enum_digest
+{
+	enum_digest_md5 = 0,
+	enum_digest_sha1,
+	enum_digest_sha2_256,
+	enum_digest_sha2_512,
+	//enum_digest_sha3
+
+	enum_digest_num
+};
+
+enum enum_module
+{
+	enum_all = 0
+};
+
+constexpr char c_strpath_all[] = ".\\";
+
+extern "C" MDA_EXT bool Digest(const uint8_t* src, const size_t len, _MDAVALUE& val, const uint8_t* salt, const size_t saltlen);
+extern "C" MDA_EXT bool DigestSel(enum_digest digest, const uint8_t* src, const size_t len, _MDAVALUE& val, const uint8_t* salt, const size_t saltlen);
+
+extern "C" MDA_EXT bool FileDigest(const char* path, _MDAVALUE& val);
+
+extern "C" MDA_EXT bool PathDigest(const char* path, _MDAVALUE& val, bool recursive);
+extern "C" MDA_EXT bool ModuleDigest(enum_module module, _MDAVALUE& val);
 
 template <typename T>
 inline T l_rot(T a, T b)
@@ -36,118 +123,10 @@ inline T r_rot(T a, T b)
 	return (a >> b) | (a << (sizeof(T) * 8 - b));
 }
 
-struct _MDAVALUE
-{
-	uint32_t* pval;
-	size_t len;
+constexpr uint32_t c_digestmod[] = { 65537,65539,65543,65551 };
 
-	_MDAVALUE()
-	{
-		pval = nullptr;
-		len = 0;
-	}
-
-	_MDAVALUE(const size_t l)
-	{
-		if (l == 0)
-		{
-			pval = nullptr;
-			len = 0;
-		}
-		else
-		{
-			pval = new uint32_t[l];
-			memset(pval, 0, sizeof(uint32_t)*l);
-			len = l;
-		}
-	}
-
-	_MDAVALUE(const uint32_t* val, const size_t l)
-	{
-		if (val == nullptr || l == 0)
-		{
-			pval = nullptr;
-			len = 0;
-		}
-		else
-		{
-			pval = new uint32_t[l];
-			memcpy_s(pval, sizeof(uint32_t)*l, val, sizeof(uint32_t)*l);
-			len = l;
-		}
-	}
-
-	~_MDAVALUE()
-	{
-		clear();
-	}
-
-	void clear()
-	{
-		if (pval != nullptr)
-		{
-			delete[] pval;
-			pval = nullptr;
-			len = 0;
-		}
-	}
-
-	void init(const size_t l)
-	{
-		clear();
-
-		if (l != 0)
-		{
-			pval = new uint32_t[l];
-			memset(pval, 0, sizeof(uint32_t)*l);
-			len = l;
-		}
-	}
-
-	void init(const uint32_t* val, const size_t l)
-	{
-		clear();
-
-		if (val != nullptr && l != 0)
-		{
-			pval = new uint32_t[l];
-			len = l;
-			memcpy_s(pval, sizeof(uint32_t)*l, val, sizeof(uint32_t)*l);
-		}
-	}
-
-	_MDAVALUE& operator=(const _MDAVALUE& o)
-	{
-		init(o.pval, o.len);
-		return *this;
-	}
-
-	bool operator==(const _MDAVALUE& o) const
-	{
-		if (len != o.len)
-		{
-			return false;
-		}
-
-		return (memcmp(pval, o.pval, sizeof(uint32_t)*len)==0);
-	}
-};
-
-class CMDA_Base
-{
-public:
-	CMDA_Base() = default;
-	virtual ~CMDA_Base() = default;
-	CMDA_Base(const CMDA_Base&) = delete;
-	CMDA_Base& operator=(const CMDA_Base&) = delete;
-	CMDA_Base(const CMDA_Base&&) = delete;
-	CMDA_Base& operator=(const CMDA_Base&&) = delete;
-
-	virtual void init() = 0;
-	virtual void set_salt(const uint8_t* salt, const size_t len) = 0;
-	virtual bool update(const uint8_t* src, const size_t len) = 0;
-	virtual bool finish(_MDAVALUE& dst) = 0;
-};
+void PreProcessVal(_MDAVALUE& val, enum_digest& digest);
+void PostProcessVal(enum_digest digest, _MDAVALUE& val);
 
 void CreateMD5(CMDA_Base*& pbase);
 void ReleaseMD5(CMDA_Base*& pbase);
@@ -164,21 +143,3 @@ void CalcSHA256(const uint8_t* src, const size_t len, _MDAVALUE& val, const uint
 void CreateSHA512(CMDA_Base*& pbase);
 void ReleaseSHA512(CMDA_Base*& pbase);
 void CalcSHA512(const uint8_t* src, const size_t len, _MDAVALUE& val, const uint8_t* salt, const size_t saltlen);
-
-enum class enum_digest
-{
-	enum_digest_md5 = 0,
-	enum_digest_sha1,
-	enum_digest_sha2_256,
-	enum_digest_sha2_512,
-	//enum_digest_sha3
-
-	enum_digest_num
-};
-
-void PreProcessVal(_MDAVALUE& val, enum_digest& digest);
-void PostProcessVal(enum_digest digest, _MDAVALUE& val);
-
-extern "C" MDA_EXT bool PathDigest(const char* path, _MDAVALUE& val, const uint8_t* salt, const size_t saltlen);
-extern "C" MDA_EXT bool FileDigest(const char* path, _MDAVALUE& val, const uint8_t* salt, const size_t saltlen);
-extern "C" MDA_EXT bool Digest(const uint8_t* src, const size_t len, _MDAVALUE& val, const uint8_t* salt, const size_t saltlen);

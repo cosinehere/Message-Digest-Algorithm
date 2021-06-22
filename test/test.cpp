@@ -12,13 +12,13 @@ int main()
 	_MDAVALUE val;
 	uint8_t salt[4] = { "123" };
 
-	//Digest(s, 70, val, nullptr, 0);
+	Digest(s, 70, val, nullptr, 0);
 	//FileDigest("J:\\迅雷下载\\cn_windows_7_professional_with_sp1_vl_build_x86_dvd_u_677939.iso", val, nullptr, 0);
-	FileDigest("L:\\Users\\Administrator\\Downloads\\DXSDK_Aug09.exe", val, nullptr, 0);
+	//FileDigest("L:\\Users\\Administrator\\Downloads\\DXSDK_Aug09.exe", val, nullptr, 0);
 	//PathDigest("E:\\src_3.5_win7_2021_V1.07a\\_Release", val, nullptr, 0);
 	//PathDigest("E:\\test", val, nullptr, 0);
 
-	if (val.pval[16] % c_md5 == 0)
+	if (val.val[16] % c_digestmod[enum_digest_md5] == 0)
 	{
 		printf("MD5\n");
 		char table[] = "0123456789abcdef";
@@ -30,7 +30,7 @@ int main()
 			//for (int i = 0; i < 4; ++i)
 			//{
 			//	str1 = "";
-			//	b = ((val.pval[a] >> i * 8) % (1 << 8)) & 0xff;
+			//	b = ((val.val[a] >> i * 8) % (1 << 8)) & 0xff;
 			//	for (int j = 0; j < 2; ++j)
 			//	{
 			//		str1.insert(0, 1, table[b % 16]);
@@ -39,34 +39,34 @@ int main()
 			//	out += str1;
 			//}
 			//printf("%s\n", out.c_str());
-			printf("%08x\n", val.pval[a]);
+			printf("%08x\n", val.val[a]);
 		}
 		printf("\n");
 	}
-	else if (val.pval[16] % c_sha1 == 0)
+	else if (val.val[16] % c_digestmod[enum_digest_sha1] == 0)
 	{
 		printf("SHA1\n");
 		for (int i = 0; i < 17; ++i)
 		{
-			printf("%08x\n", val.pval[i]);
+			printf("%08x\n", val.val[i]);
 		}
 		printf("\n");
 	}
-	else if (val.pval[16] % c_sha2_256 == 0)
+	else if (val.val[16] % c_digestmod[enum_digest_sha2_256] == 0)
 	{
 		printf("SHA2_256\n");
 		for (int i = 0; i < 17; ++i)
 		{
-			printf("%08x\n", val.pval[i]);
+			printf("%08x\n", val.val[i]);
 		}
 		printf("\n");
 	}
-	else if(val.pval[16]%c_sha2_512==0)
+	else if (val.val[16] % c_digestmod[enum_digest_sha2_512] == 0)
 	{
 		printf("SHA2_512\n");
 		for (int i = 0; i < 17; i+=2)
 		{
-			printf("%08x %08x\n", val.pval[i + 1],val.pval[i]);
+			printf("%08x %08x\n", val.val[i + 1],val.val[i]);
 		}
 		printf("\n");
 	}
