@@ -1,7 +1,8 @@
 # Message-Digest-Algorithm
 
-- [ ] md5
-- [ ] sha1
-- [ ] sha2
+- [x] md5
+- [x] sha1
+- [x] sha2_256
+- [x] sha2_512
 - [ ] sha3
 
