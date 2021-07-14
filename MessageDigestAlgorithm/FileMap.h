@@ -1,5 +1,13 @@
 #pragma once
 
+#if !defined(_MSC_VER)
+typedef unsigned int DWORD;
+typedef unsigned long long DWORDLONG;
+typedef void* HANDLE;
+typedef void* LPVOID;
+typedef const char* LPCTSTR;
+#endif
+
 namespace FileMap {
 
 constexpr DWORD MAP_SIZE = 0x20000000UL;
