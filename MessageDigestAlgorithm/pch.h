@@ -36,6 +36,7 @@ typedef unsigned __int64 uint64_t;
 #include <cstdio>
 #include <cstdlib>
 #include <cstddef>
+#include <cstdint>
 #include <cstring>
 
 #endif // defined(_MSC_VER)
