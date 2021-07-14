@@ -1,28 +1,24 @@
 #pragma once
 
+#if defined(_MSC_VER)
 #ifdef _MDADLL_EXPORT_
-	#define MDA_EXT _declspec(dllexport)
+#define MDAEXT extern "C" __declspec(dllexport)
 #else
-	#define MDA_EXT _declspec(dllimport)
+#define MDAEXT extern "C" __declspec(dllimport)
 #endif
 
-#include <stdint.h>
-#ifndef _STDINT
-#define _STDINT
-typedef char				int8_t;
-typedef short				int16_t;
-typedef int					int32_t;
-typedef __int64				int64_t;
-typedef unsigned char		uint8_t;
-typedef unsigned short		uint16_t;
-typedef unsigned int		uint32_t;
-typedef unsigned __int64	uint64_t;
-#endif // ifndef _STDINT
+#define NOVTABLE __declspec(novtable)
 
-#if (!defined(_MSC_VER) && __cplusplus < 201103L) || (defined(_MSC_VER) && _MSC_VER < 1900)   // C++11 is not supported.
-	#define nullptr  NULL
-	#define override
+#else
+#ifdef _MDADLL_EXPORT_
+#define MDAEXT extern "C" __attribute__((visibility("default")))
+#else
+#define MDAEXT
 #endif
+
+#define NOVTABLE
+
+#endif // defined(_MSC_VER)
 
 struct _MDAVALUE
 {
@@ -70,11 +66,11 @@ struct _MDAVALUE
 			return false;
 		}
 
-		return (memcmp(val, o.val, sizeof(uint32_t)*len)==0);
+		return (memcmp(val, o.val, sizeof(uint32_t)*len) == 0);
 	}
 };
 
-class CMDA_Base
+class NOVTABLE CMDA_Base
 {
 public:
 	virtual void init() = 0;
@@ -103,13 +99,13 @@ enum enum_module
 
 constexpr char c_strpath_all[] = ".\\";
 
-extern "C" MDA_EXT bool Digest(const uint8_t* src, const size_t len, _MDAVALUE& val, const uint8_t* salt, const size_t saltlen);
-extern "C" MDA_EXT bool DigestSel(enum_digest digest, const uint8_t* src, const size_t len, _MDAVALUE& val, const uint8_t* salt, const size_t saltlen);
+MDAEXT bool Digest(const uint8_t* src, const size_t len, _MDAVALUE& val, const uint8_t* salt, const size_t saltlen);
+MDAEXT bool DigestSel(enum_digest digest, const uint8_t* src, const size_t len, _MDAVALUE& val, const uint8_t* salt, const size_t saltlen);
 
-extern "C" MDA_EXT bool FileDigest(const char* path, _MDAVALUE& val);
+MDAEXT bool FileDigest(const char* path, _MDAVALUE& val);
 
-extern "C" MDA_EXT bool PathDigest(const char* path, _MDAVALUE& val, bool recursive);
-extern "C" MDA_EXT bool ModuleDigest(enum_module module, _MDAVALUE& val);
+MDAEXT bool PathDigest(const char* path, _MDAVALUE& val, bool recursive);
+MDAEXT bool ModuleDigest(enum_module module, _MDAVALUE& val);
 
 template <typename T>
 inline T l_rot(T a, T b)

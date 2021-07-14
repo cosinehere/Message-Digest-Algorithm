@@ -1,14 +1,44 @@
-﻿// pch.h: 这是预编译标头文件。
-// 下方列出的文件仅编译一次，提高了将来生成的生成性能。
-// 这还将影响 IntelliSense 性能，包括代码完成和许多代码浏览功能。
-// 但是，如果此处列出的文件中的任何一个在生成之间有更新，它们全部都将被重新编译。
-// 请勿在此处添加要频繁更新的文件，这将使得性能优势无效。
-
-#ifndef PCH_H
+﻿#ifndef PCH_H
 #define PCH_H
 
-// 添加要在此处预编译的标头
-#include "framework.h"
+#if defined(_MSC_VER)	// MSVC
+
+#if _MSC_VER < 1400	// stdint.h
+
+typedef char int8_t;
+typedef unsigned char uint8_t;
+typedef short int16_t;
+typedef unsigned short uint16_t;
+typedef int int32_t;
+typedef unsigned int uint32_t;
+typedef __int64 int64_t;
+typedef unsigned __int64 uint64_t;
+
+#else
+
+#include <cstdint>
+
+#endif
+
+#if _MSC_VER < 1900 // C++11
+
+#define constexpr const
+#define nullptr NULL
+#define override
+
+#endif
+
+#define WIN32_LEAN_AND_MEAN
+#include <windows.h>
+
+#elif defined(__GNUC__)
+
+#include <cstdio>
+#include <cstdlib>
+#include <cstddef>
+#include <cstring>
+
+#endif // defined(_MSC_VER)
 
 #define _MDADLL_EXPORT_
 

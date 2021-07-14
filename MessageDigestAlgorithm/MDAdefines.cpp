@@ -139,7 +139,7 @@ void UpdateWithFile(const char* path, CMDA_Base* base)
 	delete filemap;
 }
 
-extern "C" MDA_EXT bool Digest(const uint8_t* src, const size_t len, _MDAVALUE& val, const uint8_t* salt, const size_t saltlen)
+bool Digest(const uint8_t* src, const size_t len, _MDAVALUE& val, const uint8_t* salt, const size_t saltlen)
 {
 	enum_digest digest;
 	PreProcessVal(val, digest);
@@ -166,7 +166,7 @@ extern "C" MDA_EXT bool Digest(const uint8_t* src, const size_t len, _MDAVALUE& 
 	return true;
 }
 
-extern "C" MDA_EXT bool DigestSel(enum_digest digest, const uint8_t* src, const size_t len, _MDAVALUE& val, const uint8_t* salt, const size_t saltlen)
+bool DigestSel(enum_digest digest, const uint8_t* src, const size_t len, _MDAVALUE& val, const uint8_t* salt, const size_t saltlen)
 {
 	switch (digest)
 	{
@@ -190,7 +190,7 @@ extern "C" MDA_EXT bool DigestSel(enum_digest digest, const uint8_t* src, const 
 	return false;
 }
 
-extern "C" MDA_EXT bool FileDigest(const char* path, _MDAVALUE& val)
+bool FileDigest(const char* path, _MDAVALUE& val)
 {
 	enum_digest digest;
 	PreProcessVal(val, digest);
@@ -224,7 +224,7 @@ extern "C" MDA_EXT bool FileDigest(const char* path, _MDAVALUE& val)
 	return true;
 }
 
-extern "C" MDA_EXT bool PathDigest(const char* path, _MDAVALUE& val, bool recursive)
+bool PathDigest(const char* path, _MDAVALUE& val, bool recursive)
 {
 	enum_digest digest;
 	PreProcessVal(val, digest);
@@ -267,7 +267,7 @@ extern "C" MDA_EXT bool PathDigest(const char* path, _MDAVALUE& val, bool recurs
 	return true;
 }
 
-extern "C" MDA_EXT bool ModuleDigest(enum_module module, _MDAVALUE& val)
+bool ModuleDigest(enum_module module, _MDAVALUE& val)
 {
 	enum_digest digest;
 	PreProcessVal(val, digest);
