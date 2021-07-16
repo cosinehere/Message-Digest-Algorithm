@@ -76,7 +76,7 @@ void CMDA_SHA512::set_salt(const uint8_t * salt, const size_t len)
 	}
 
 	p_salt = new uint8_t[len];
-	memcpy_s(p_salt, sizeof(uint8_t)*len, salt, sizeof(uint8_t)*len);
+	memcpy(p_salt, salt, sizeof(uint8_t)*len);
 	p_saltlen = len;
 }
 
@@ -86,7 +86,7 @@ bool CMDA_SHA512::update(const uint8_t * src, const size_t len)
 	while (cnt < len)
 	{
 		size_t bufleft = (len - cnt > 128 - buflen) ? (128 - buflen) : (len - cnt);
-		memcpy_s(&buffer[buflen], (rsize_t)bufleft * sizeof(uint8_t), src + cnt, (rsize_t)bufleft * sizeof(uint8_t));
+		memcpy(&buffer[buflen], src + cnt, bufleft * sizeof(uint8_t));
 		cnt += bufleft;
 		buflen += bufleft;
 

@@ -40,7 +40,7 @@ struct _MDAVALUE
 		else
 		{
 			len = (l > 17) ? 17 : l;
-			memcpy_s(val, sizeof(uint32_t)*len, v, sizeof(uint32_t)*len);
+			memcpy(val, v, sizeof(uint32_t)*len);
 		}
 	}
 
@@ -49,7 +49,7 @@ struct _MDAVALUE
 		if (v != nullptr && l != 0)
 		{
 			len = (l > 17) ? 17 : l;
-			memcpy_s(val, sizeof(uint32_t)*len, v, sizeof(uint32_t)*len);
+			memcpy(val, v, sizeof(uint32_t)*len);
 		}
 	}
 

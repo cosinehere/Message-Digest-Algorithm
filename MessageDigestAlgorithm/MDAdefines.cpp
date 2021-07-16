@@ -69,7 +69,7 @@ void PostProcessVal(enum_digest digest, _MDAVALUE& val)
 
 	_MDAVALUE sha512;
 	CalcSHA512(reinterpret_cast<uint8_t*>(val.val), val.len * 4, sha512, nullptr, 0);
-	memcpy_s(&val.val[len], sizeof(uint32_t)*(17 - len), sha512.val, sizeof(uint32_t)*(17 - len));
+	memcpy(&val.val[len], sha512.val, sizeof(uint32_t)*(17 - len));
 		
 	switch (digest)
 	{
