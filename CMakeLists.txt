@@ -12,9 +12,9 @@ set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
 # global g++ compile flags
-set(CMAKE_CXX_FLAGS "-O2 -Wall")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O2 -Wall")
 
-# CryptoMethods.so
+# MessageDigestAlgorithm.so
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/lib)
 add_library(MessageDigestAlgorithm SHARED
 	#${CMAKE_SOURCE_DIR}/MessageDigestAlgorithm/pch.cpp
@@ -29,9 +29,9 @@ target_precompile_headers(MessageDigestAlgorithm PUBLIC
 	${CMAKE_SOURCE_DIR}/MessageDigestAlgorithm/pch.h)
 set_target_properties(MessageDigestAlgorithm PROPERTIES COMPILE_FLAGS "-fvisibility=hidden -Wl,-s")
 
-# CryptoTest
+# MessageDigestAlgorithmTest
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/bin)
-add_executable(MDATest WIN32
+add_executable(MDATest
 	${CMAKE_SOURCE_DIR}/test/test.cpp
 	)
 target_link_libraries(MDATest MessageDigestAlgorithm)
