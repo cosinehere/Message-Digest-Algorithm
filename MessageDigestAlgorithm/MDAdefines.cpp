@@ -1,7 +1,10 @@
 #include "pch.h"
 
 #include <sys/stat.h>
+#ifdef _WIN32
 #include <io.h>
+#else
+#endif
 #include <string>
 #include <ctime>
 #include <set>
@@ -90,6 +93,7 @@ void PostProcessVal(enum_digest digest, _MDAVALUE& val)
 	val.len = 17;
 }
 
+#ifdef _WIN32
 void FindFiles(const char* path, std::set<std::string>& files, bool recursive)
 {
 	std::string format = path;
@@ -125,6 +129,11 @@ void FindFiles(const char* path, std::set<std::string>& files, bool recursive)
 		_findclose(hfile);
 	}
 }
+#else
+void FindFiles(const char* path, std::set<std::string>& files, bool recursive)
+{
+}
+#endif
 
 void UpdateWithFile(const char* path, CMDA_Base* base)
 {
