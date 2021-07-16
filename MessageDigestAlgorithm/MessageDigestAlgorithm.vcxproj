@@ -161,6 +161,7 @@
     <ClInclude Include="CMDA_SHA512.h" />
     <ClInclude Include="FileMap.h" />
     <ClInclude Include="MDAdefines.h" />
+    <ClInclude Include="mio.hpp" />
     <ClInclude Include="pch.h" />
   </ItemGroup>
   <ItemGroup>

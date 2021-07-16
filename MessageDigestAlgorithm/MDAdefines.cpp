@@ -6,7 +6,8 @@
 #include <ctime>
 #include <set>
 
-#include "FileMap.h"
+//#include "FileMap.h"
+#include "mio.hpp"
 
 #include "MDAdefines.h"
 
@@ -127,16 +128,29 @@ void FindFiles(const char* path, std::set<std::string>& files, bool recursive)
 
 void UpdateWithFile(const char* path, CMDA_Base* base)
 {
-	FileMap::FileMap* filemap = new FileMap::FileMap;
-	if (filemap->Open(path))
+// 	FileMap::FileMap* filemap = new FileMap::FileMap;
+// 	if (filemap->Open(path))
+// 	{
+// 		while (filemap->Remap())
+// 		{
+// 			base->update(reinterpret_cast<uint8_t*>(filemap->GetBuffer()), filemap->GetLength());
+// 		}
+// 		filemap->Close();
+// 	}
+// 	delete filemap;
+
+	mio::mio<mio::enum_mode_read>* file = new mio::mio<mio::enum_mode_read>;
+	if(file->open_file(path))
 	{
-		while (filemap->Remap())
+		uint8_t* buffer = new uint8_t[1024 * 1024 * 64];
+		size_t readsize = 1024 * 1024 * 64;
+		while ((readsize = file->read_file(buffer, 1024 * 1024 * 64)) != 0)
 		{
-			base->update(reinterpret_cast<uint8_t*>(filemap->GetBuffer()), filemap->GetLength());
+			base->update(buffer, readsize);
 		}
-		filemap->Close();
+		delete[] buffer;
 	}
-	delete filemap;
+	delete file;
 }
 
 bool Digest(const uint8_t* src, const size_t len, _MDAVALUE& val, const uint8_t* salt, const size_t saltlen)
