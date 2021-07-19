@@ -28,3 +28,7 @@ private:
 	void transform();
 };
 
+void CreateSHA256(CMDA_Base*& pbase);
+void ReleaseSHA256(CMDA_Base*& pbase);
+void CalcSHA256(const uint8_t* src, const size_t len, _MDAVALUE& val, const uint8_t* salt, const size_t saltlen);
+

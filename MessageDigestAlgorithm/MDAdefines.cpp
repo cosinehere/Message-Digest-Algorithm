@@ -13,6 +13,10 @@
 #include "mio.hpp"
 
 #include "MDAdefines.h"
+#include "CMDA_MD5.h"
+#include "CMDA_SHA1.h"
+#include "CMDA_SHA256.h"
+#include "CMDA_SHA512.h"
 
 void PreProcessVal(_MDAVALUE& val, enum_digest& digest)
 {

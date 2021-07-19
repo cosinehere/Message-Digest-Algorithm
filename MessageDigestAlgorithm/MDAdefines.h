@@ -127,19 +127,3 @@ constexpr uint32_t c_digestmod[] = { 65537,65539,65543,65551 };
 
 void PreProcessVal(_MDAVALUE& val, enum_digest& digest);
 void PostProcessVal(enum_digest digest, _MDAVALUE& val);
-
-void CreateMD5(CMDA_Base*& pbase);
-void ReleaseMD5(CMDA_Base*& pbase);
-void CalcMD5(const uint8_t* src, const size_t len, _MDAVALUE& val, const uint8_t* salt, const size_t saltlen);
-
-void CreateSHA1(CMDA_Base*& pbase);
-void ReleaseSHA1(CMDA_Base*& pbase);
-void CalcSHA1(const uint8_t* src, const size_t len, _MDAVALUE& val, const uint8_t* salt, const size_t saltlen);
-
-void CreateSHA256(CMDA_Base*& pbase);
-void ReleaseSHA256(CMDA_Base*& pbase);
-void CalcSHA256(const uint8_t* src, const size_t len, _MDAVALUE& val, const uint8_t* salt, const size_t saltlen);
-
-void CreateSHA512(CMDA_Base*& pbase);
-void ReleaseSHA512(CMDA_Base*& pbase);
-void CalcSHA512(const uint8_t* src, const size_t len, _MDAVALUE& val, const uint8_t* salt, const size_t saltlen);
