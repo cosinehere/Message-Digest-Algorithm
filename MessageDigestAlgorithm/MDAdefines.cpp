@@ -1,228 +1,73 @@
 #include "pch.h"
 
-#include <sys/stat.h>
-#ifdef _WIN32
-#include <io.h>
-#else
-#endif
-#include <string>
-#include <ctime>
-#include <set>
-
-//#include "FileMap.h"
-#include "mio.hpp"
-
 #include "MDAdefines.h"
 #include "CMDA_MD5.h"
 #include "CMDA_SHA1.h"
 #include "CMDA_SHA256.h"
 #include "CMDA_SHA512.h"
 
-void PreProcessVal(_MDAVALUE& val, enum_digest& digest)
+inline void CreateMD5(CMDA_Base*& pbase)
 {
-	if (val.len == 17 && val.val[16])
-	{
-		if (val.val[16] % c_digestmod[enum_digest_md5] == 0)
-		{
-			digest = enum_digest_md5;
-		}
-		else if (val.val[16] % c_digestmod[enum_digest_sha1] == 0)
-		{
-			digest = enum_digest_sha1;
-		}
-		else if (val.val[16] % c_digestmod[enum_digest_sha2_256] == 0)
-		{
-			digest = enum_digest_sha2_256;
-		}
-		else //if (val.val[16] % c_digestmod[enum_digest_sha2_512] == 0)
-		{
-			digest = enum_digest_sha2_512;
-		}
-	}
-	else
-	{
-		srand(static_cast<unsigned int>(time(nullptr)));
-		switch (rand() % enum_digest_num)
-		{
-		case 0:
-			val.val[16] = (rand() / c_digestmod[enum_digest_md5]) * c_digestmod[enum_digest_md5];
-			digest = enum_digest_md5;
-			break;
-		case 1:
-			val.val[16] = (rand() / c_digestmod[enum_digest_sha1]) * c_digestmod[enum_digest_sha1];
-			digest = enum_digest_sha1;
-			break;
-		case 2:
-			val.val[16] = (rand() / c_digestmod[enum_digest_sha2_256]) * c_digestmod[enum_digest_sha2_256];
-			digest = enum_digest_sha2_256;
-			break;
-		case 3:
-			val.val[16] = (rand() / c_digestmod[enum_digest_sha2_512] * c_digestmod[enum_digest_sha2_512]);
-			digest = enum_digest_sha2_512;
-			break;
-		}
-	}
-
-	val.len = 17;
+	pbase = reinterpret_cast<CMDA_Base*>(new CMDA_MD5());
 }
 
-void PostProcessVal(enum_digest digest, _MDAVALUE& val)
+inline void ReleaseMD5(CMDA_Base*& pbase)
 {
-	size_t len = val.len;
-	if (len > 16)
+	if (pbase != nullptr)
 	{
-		return;
-	}
-
-	_MDAVALUE sha512;
-	CalcSHA512(reinterpret_cast<uint8_t*>(val.val), val.len * 4, sha512, nullptr, 0);
-	memcpy(&val.val[len], sha512.val, sizeof(uint32_t)*(17 - len));
-		
-	switch (digest)
-	{
-	case enum_digest_md5:
-		val.val[16] = val.val[16] / c_digestmod[enum_digest_md5] * c_digestmod[enum_digest_md5];
-		break;
-	case enum_digest_sha1:
-		val.val[16] = val.val[16] / c_digestmod[enum_digest_sha1] * c_digestmod[enum_digest_sha1];
-		break;
-	case enum_digest_sha2_256:
-		val.val[16] = val.val[16] / c_digestmod[enum_digest_sha2_256] * c_digestmod[enum_digest_sha2_256];
-		break;
-	case enum_digest_sha2_512:
-		val.val[16] = val.val[16] / c_digestmod[enum_digest_sha2_512] * c_digestmod[enum_digest_sha2_512];
-		break;
-	}
-
-	val.len = 17;
-}
-
-#ifdef _WIN32
-void FindFiles(const char* path, std::set<std::string>& files, bool recursive)
-{
-	std::string format = path;
-	format.append("\\*");
-	struct _finddata_t info;
-	intptr_t hfile;
-	hfile = _findfirst(format.c_str(), &info);
-	if (hfile != -1)
-	{
-		do {
-			if (info.attrib&_A_SUBDIR)
-			{
-				if (recursive)
-				{
-					if (strcmp(info.name, ".") && strcmp(info.name, ".."))
-					{
-						std::string folder = path;
-						folder.append("\\");
-						folder.append(info.name);
-						FindFiles(folder.c_str(), files, recursive);
-					}
-				}
-			}
-			else
-			{
-				std::string fullpath = path;
-				fullpath.append("\\");
-				fullpath.append(info.name);
-				files.insert(fullpath);
-			}
-		} while (_findnext(hfile, &info) == 0);
-
-		_findclose(hfile);
+		CMDA_MD5* pmd5 = reinterpret_cast<CMDA_MD5*>(pbase);
+		delete pmd5;
+		pbase = nullptr;
 	}
 }
-#else
-void FindFiles(const char* path, std::set<std::string>& files, bool recursive)
+
+inline void CreateSHA1(CMDA_Base*& pbase)
 {
+	pbase = reinterpret_cast<CMDA_Base*>(new CMDA_SHA1());
 }
-#endif
 
-void UpdateWithFile(const char* path, CMDA_Base* base)
+inline void ReleaseSHA1(CMDA_Base*& pbase)
 {
-// 	FileMap::FileMap* filemap = new FileMap::FileMap;
-// 	if (filemap->Open(path))
-// 	{
-// 		while (filemap->Remap())
-// 		{
-// 			base->update(reinterpret_cast<uint8_t*>(filemap->GetBuffer()), filemap->GetLength());
-// 		}
-// 		filemap->Close();
-// 	}
-// 	delete filemap;
-
-	mio::mio<mio::enum_mode_read>* file = new mio::mio<mio::enum_mode_read>;
-	if(file->open_file(path))
+	if (pbase != nullptr)
 	{
-		uint8_t* buffer = new uint8_t[1024 * 1024 * 64];
-		size_t readsize = 1024 * 1024 * 64;
-		while ((readsize = file->read_file(buffer, 1024 * 1024 * 64)) != 0)
-		{
-			base->update(buffer, readsize);
-		}
-		delete[] buffer;
+		CMDA_SHA1* psha1 = reinterpret_cast<CMDA_SHA1*>(pbase);
+		delete psha1;
+		pbase = nullptr;
 	}
-	delete file;
 }
 
-bool Digest(const uint8_t* src, const size_t len, _MDAVALUE& val, const uint8_t* salt, const size_t saltlen)
+inline void CreateSHA256(CMDA_Base*& pbase)
 {
-	enum_digest digest;
-	PreProcessVal(val, digest);
+	pbase = reinterpret_cast<CMDA_Base*>(new CMDA_SHA256());
+}
 
-	switch (digest)
+inline void ReleaseSHA256(CMDA_Base*& pbase)
+{
+	if (pbase != nullptr)
 	{
-	case enum_digest_md5:
-		CalcMD5(src, len, val, salt, saltlen);
-		break;
-	case enum_digest_sha1:
-		CalcSHA1(src, len, val, salt, saltlen);
-		break;
-	case enum_digest_sha2_256:
-		CalcSHA256(src, len, val, salt, saltlen);
-		break;
-	case enum_digest_sha2_512:
-		CalcSHA512(src, len, val, salt, saltlen);
-		break;
-	default: return false;
+		CMDA_SHA256* psha256 = reinterpret_cast<CMDA_SHA256*>(pbase);
+		delete psha256;
+		pbase = nullptr;
 	}
-
-	PostProcessVal(digest, val);
-
-	return true;
 }
 
-bool DigestSel(enum_digest digest, const uint8_t* src, const size_t len, _MDAVALUE& val, const uint8_t* salt, const size_t saltlen)
+inline void CreateSHA512(CMDA_Base*& pbase)
 {
-	switch (digest)
+	pbase = reinterpret_cast<CMDA_Base*>(new CMDA_SHA512());
+}
+
+inline void ReleaseSHA512(CMDA_Base*& pbase)
+{
+	if (pbase != nullptr)
 	{
-	case enum_digest_md5:
-		CalcMD5(src, len, val, salt, saltlen);
-		break;
-	case enum_digest_sha1:
-		CalcSHA1(src, len, val, salt, saltlen);
-		break;
-	case enum_digest_sha2_256:
-		CalcSHA256(src, len, val, salt, saltlen);
-		break;
-	case enum_digest_sha2_512:
-		CalcSHA512(src, len, val, salt, saltlen);
-		break;
-	default: return false;
+		CMDA_SHA512* psha512 = reinterpret_cast<CMDA_SHA512*>(pbase);
+		delete psha512;
+		pbase = nullptr;
 	}
-
-	PostProcessVal(digest, val);
-
-	return false;
 }
 
-bool FileDigest(const char* path, _MDAVALUE& val)
+void CreateBase(enum_digest digest, CMDA_Base*& base)
 {
-	enum_digest digest;
-	PreProcessVal(val, digest);
-
-	CMDA_Base* base = nullptr;
 	switch (digest)
 	{
 	case enum_digest_md5: CreateMD5(base); break;
@@ -230,14 +75,10 @@ bool FileDigest(const char* path, _MDAVALUE& val)
 	case enum_digest_sha2_256: CreateSHA256(base); break;
 	case enum_digest_sha2_512: CreateSHA512(base); break;
 	}
+}
 
-	if (base != nullptr)
-	{
-		UpdateWithFile(path, base);
-
-		base->finish(val);
-	}
-
+void ReleaseBase(enum_digest digest, CMDA_Base*& base)
+{
 	switch (digest)
 	{
 	case enum_digest_md5: ReleaseMD5(base); break;
@@ -245,69 +86,68 @@ bool FileDigest(const char* path, _MDAVALUE& val)
 	case enum_digest_sha2_256: ReleaseSHA256(base); break;
 	case enum_digest_sha2_512: ReleaseSHA512(base); break;
 	}
-
-	PostProcessVal(digest, val);
-
-	return true;
 }
 
-bool PathDigest(const char* path, _MDAVALUE& val, bool recursive)
+void CalcMD5(const uint8_t* src, const size_t len, _MDAVALUE& val, const uint8_t* salt, const size_t saltlen)
 {
-	enum_digest digest;
-	PreProcessVal(val, digest);
-
-	std::set<std::string> files;
-	files.clear();
-
-	FindFiles(path, files, recursive);
-
-	CMDA_Base* base = nullptr;
-	switch (digest)
+	CMDA_MD5* pmd5 = new CMDA_MD5();
+	pmd5->init();
+	if (salt != nullptr && saltlen != 0)
 	{
-	case enum_digest_md5: CreateMD5(base); break;
-	case enum_digest_sha1: CreateSHA1(base); break;
-	case enum_digest_sha2_256: CreateSHA256(base); break;
-	case enum_digest_sha2_512: CreateSHA512(base); break;
+		pmd5->set_salt(salt, saltlen);
 	}
-
-	if (base != nullptr)
+	if (src != nullptr && len != 0)
 	{
-		std::set<std::string>::const_iterator it = files.begin();
-		for (; it != files.end(); ++it)
-		{
-			UpdateWithFile(it->c_str(), base);
-		}
-
-		base->finish(val);
+		pmd5->update(src, len);
 	}
-
-	switch (digest)
-	{
-	case enum_digest_md5: ReleaseMD5(base); break;
-	case enum_digest_sha1: ReleaseSHA1(base); break;
-	case enum_digest_sha2_256: ReleaseSHA256(base); break;
-	case enum_digest_sha2_512: ReleaseSHA512(base); break;
-	}
-	
-	PostProcessVal(digest, val);
-
-	return true;
+	pmd5->finish(val);
+	delete pmd5;
 }
 
-bool ModuleDigest(enum_module module, _MDAVALUE& val)
+void CalcSHA1(const uint8_t* src, const size_t len, _MDAVALUE& val, const uint8_t* salt, const size_t saltlen)
 {
-	enum_digest digest;
-	PreProcessVal(val, digest);
-
-	switch (module)
+	CMDA_SHA1* psha1 = new CMDA_SHA1();
+	psha1->init();
+	if (salt != nullptr && saltlen != 0)
 	{
-	case enum_all:
-		PathDigest(c_strpath_all, val, true);
-		break;
-	default: return false;
+		psha1->set_salt(salt, saltlen);
 	}
+	if (src != nullptr && len != 0)
+	{
+		psha1->update(src, len);
+	}
+	psha1->finish(val);
+	delete psha1;
+}
 
-	PostProcessVal(digest, val);
+void CalcSHA256(const uint8_t* src, const size_t len, _MDAVALUE& val, const uint8_t* salt, const size_t saltlen)
+{
+	CMDA_SHA256* psha256 = new CMDA_SHA256();
+	psha256->init();
+	if (salt != nullptr && saltlen != 0)
+	{
+		psha256->set_salt(salt, saltlen);
+	}
+	if (src != nullptr && len != 0)
+	{
+		psha256->update(src, len);
+	}
+	psha256->finish(val);
+	delete psha256;
+}
 
-	return true;
+void CalcSHA512(const uint8_t* src, const size_t len, _MDAVALUE& val, const uint8_t* salt, const size_t saltlen)
+{
+	CMDA_SHA512* psha512 = new CMDA_SHA512();
+	psha512->init();
+	if (salt != nullptr && saltlen != 0)
+	{
+		psha512->set_salt(salt, saltlen);
+	}
+	if (src != nullptr && len != 0)
+	{
+		psha512->update(src, len);
+	}
+	psha512->finish(val);
+	delete psha512;
 }

@@ -1,12 +1,14 @@
 #include "pch.h"
 #include "CMDA_SHA256.h"
 
+#include "MDATemplates.h"
+
 #define RROT(a,b) r_rot<uint32_t>(a,b)
 
-constexpr uint32_t c_sha256initvar[] = 
-	{ 0x6a09e667ul, 0xbb67ae85ul, 0x3c6ef372ul, 0xa54ff53aul, 0x510e527ful, 0x9b05688cul, 0x1f83d9abul, 0x5be0cd19ul };
+constexpr uint32_t c_sha256initvar[] =
+{ 0x6a09e667ul, 0xbb67ae85ul, 0x3c6ef372ul, 0xa54ff53aul, 0x510e527ful, 0x9b05688cul, 0x1f83d9abul, 0x5be0cd19ul };
 
-constexpr uint32_t k[] = 
+constexpr uint32_t k[] =
 {
 	0x428a2f98ul, 0x71374491ul, 0xb5c0fbcful, 0xe9b5dba5ul, 0x3956c25bul, 0x59f111f1ul, 0x923f82a4, 0xab1c5ed5ul,
 	0xd807aa98ul, 0x12835b01ul, 0x243185beul, 0x550c7dc3ul, 0x72be5d74ul, 0x80deb1feul, 0x9bdc06a7, 0xc19bf174ul,
@@ -170,35 +172,4 @@ void CMDA_SHA256::transform()
 	p_val.val[5] += f;
 	p_val.val[6] += g;
 	p_val.val[7] += h;
-}
-
-void CreateSHA256(CMDA_Base*& pbase)
-{
-	pbase = reinterpret_cast<CMDA_Base*>(new CMDA_SHA256());
-}
-
-void ReleaseSHA256(CMDA_Base*& pbase)
-{
-	if (pbase != nullptr)
-	{
-		CMDA_SHA256* psha256 = reinterpret_cast<CMDA_SHA256*>(pbase);
-		delete psha256;
-		pbase = nullptr;
-	}
-}
-
-void CalcSHA256(const uint8_t* src, const size_t len, _MDAVALUE& val, const uint8_t* salt, const size_t saltlen)
-{
-	CMDA_SHA256* psha256 = new CMDA_SHA256();
-	psha256->init();
-	if (salt != nullptr && saltlen != 0)
-	{
-		psha256->set_salt(salt, saltlen);
-	}
-	if (src != nullptr && len != 0)
-	{
-		psha256->update(src, len);
-	}
-	psha256->finish(val);
-	delete psha256;
 }

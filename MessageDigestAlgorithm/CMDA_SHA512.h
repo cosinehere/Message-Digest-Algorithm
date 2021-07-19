@@ -22,12 +22,8 @@ private:
 
 	uint8_t buffer[128];
 	size_t buflen;
-	
+
 	uint64_t totbytes;
 
 	void transform();
 };
-
-void CreateSHA512(CMDA_Base*& pbase);
-void ReleaseSHA512(CMDA_Base*& pbase);
-void CalcSHA512(const uint8_t* src, const size_t len, _MDAVALUE& val, const uint8_t* salt, const size_t saltlen);

@@ -1,6 +1,8 @@
 #include "pch.h"
 #include "CMDA_SHA1.h"
 
+#include "MDATemplates.h"
+
 #define LROT(a,b) l_rot<uint32_t>(a,b)
 
 constexpr uint32_t c_sha1initvar[] = { 0x67452301ul, 0xEFCDAB89ul, 0x98BADCFEul, 0x10325476ul, 0xC3D2E1F0ul };
@@ -179,35 +181,3 @@ void CMDA_SHA1::transform()
 	p_val.val[3] += d;
 	p_val.val[4] += e;
 }
-
-void CreateSHA1(CMDA_Base*& pbase)
-{
-	pbase = reinterpret_cast<CMDA_Base*>(new CMDA_SHA1());
-}
-
-void ReleaseSHA1(CMDA_Base*& pbase)
-{
-	if (pbase != nullptr)
-	{
-		CMDA_SHA1* psha1 = reinterpret_cast<CMDA_SHA1*>(pbase);
-		delete psha1;
-		pbase = nullptr;
-	}
-}
-
-void CalcSHA1(const uint8_t* src, const size_t len, _MDAVALUE& val, const uint8_t* salt, const size_t saltlen)
-{
-	CMDA_SHA1* psha1 = new CMDA_SHA1();
-	psha1->init();
-	if (salt != nullptr && saltlen != 0)
-	{
-		psha1->set_salt(salt, saltlen);
-	}
-	if (src != nullptr && len != 0)
-	{
-		psha1->update(src, len);
-	}
-	psha1->finish(val);
-	delete psha1;
-}
-

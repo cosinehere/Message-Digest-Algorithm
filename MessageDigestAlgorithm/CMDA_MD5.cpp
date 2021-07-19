@@ -1,6 +1,8 @@
 #include "pch.h"
 #include "CMDA_MD5.h"
 
+#include "MDATemplates.h"
+
 #define LROT(a,b) l_rot<uint32_t>(a,b)
 
 constexpr uint32_t c_md5initvar[] = { 0x67452301ul, 0xEFCDAB89ul, 0x98BADCFEul, 0x10325476ul };
@@ -144,7 +146,7 @@ void CMDA_MD5::set_salt(const uint8_t* salt, const size_t len)
 	{
 		delete[] p_salt;
 	}
-	
+
 	p_salt = new uint8_t[len];
 	memcpy(p_salt, salt, sizeof(uint8_t)*len);
 	p_saltlen = len;
@@ -227,35 +229,4 @@ void CMDA_MD5::transform()
 	p_val.val[1] += b;
 	p_val.val[2] += c;
 	p_val.val[3] += d;
-}
-
-void CreateMD5(CMDA_Base*& pbase)
-{
-	pbase = reinterpret_cast<CMDA_Base*>(new CMDA_MD5());
-}
-
-void ReleaseMD5(CMDA_Base*& pbase)
-{
-	if (pbase != nullptr)
-	{
-		CMDA_MD5* pmd5 = reinterpret_cast<CMDA_MD5*>(pbase);
-		delete pmd5;
-		pbase = nullptr;
-	}
-}
-
-void CalcMD5(const uint8_t* src, const size_t len, _MDAVALUE& val, const uint8_t* salt, const size_t saltlen)
-{
-	CMDA_MD5* pmd5 = new CMDA_MD5();
-	pmd5->init();
-	if (salt != nullptr && saltlen != 0)
-	{
-		pmd5->set_salt(salt, saltlen);
-	}
-	if (src != nullptr && len != 0)
-	{
-		pmd5->update(src, len);
-	}
-	pmd5->finish(val);
-	delete pmd5;
 }

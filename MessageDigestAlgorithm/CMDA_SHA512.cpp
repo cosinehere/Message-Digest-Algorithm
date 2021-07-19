@@ -1,6 +1,8 @@
 #include "pch.h"
 #include "CMDA_SHA512.h"
 
+#include "MDATemplates.h"
+
 #define RROT(a,b) r_rot<uint64_t>(a,b)
 
 constexpr uint64_t c_sha512initvar[] =
@@ -9,7 +11,7 @@ constexpr uint64_t c_sha512initvar[] =
 	0x510e527fade682d1ull, 0x9b05688c2b3e6c1full, 0x1f83d9abfb41bd6bull, 0x5be0cd19137e2179ull
 };
 
-constexpr uint64_t k[] = 
+constexpr uint64_t k[] =
 {
 	0x428a2f98d728ae22ull, 0x7137449123ef65cdull, 0xb5c0fbcfec4d3b2full, 0xe9b5dba58189dbbcull,
 	0x3956c25bf348b538ull, 0x59f111f1b605d019ull, 0x923f82a4af194f9bull, 0xab1c5ed5da6d8118ull,
@@ -153,9 +155,9 @@ void CMDA_SHA512::transform()
 	for (size_t j = 0; j < 16; ++j)
 	{
 		word[j] = (static_cast<uint64_t>(buffer[8 * j]) << 56) | (static_cast<uint64_t>(buffer[8 * j + 1]) << 48) |
-				(static_cast<uint64_t>(buffer[8 * j + 2]) << 40) | (static_cast<uint64_t>(buffer[8 * j + 3]) << 32) |
-				(static_cast<uint64_t>(buffer[8 * j + 4]) << 24) | (static_cast<uint64_t>(buffer[8 * j + 5]) << 16) |
-				(static_cast<uint64_t>(buffer[8 * j + 6]) << 8) | static_cast<uint64_t>(buffer[8 * j + 7]) ;
+			(static_cast<uint64_t>(buffer[8 * j + 2]) << 40) | (static_cast<uint64_t>(buffer[8 * j + 3]) << 32) |
+			(static_cast<uint64_t>(buffer[8 * j + 4]) << 24) | (static_cast<uint64_t>(buffer[8 * j + 5]) << 16) |
+			(static_cast<uint64_t>(buffer[8 * j + 6]) << 8) | static_cast<uint64_t>(buffer[8 * j + 7]);
 	}
 	for (size_t j = 16; j < 80; ++j)
 	{
@@ -194,35 +196,4 @@ void CMDA_SHA512::transform()
 	p[5] += f;
 	p[6] += g;
 	p[7] += h;
-}
-
-void CreateSHA512(CMDA_Base*& pbase)
-{
-	pbase = reinterpret_cast<CMDA_Base*>(new CMDA_SHA512());
-}
-
-void ReleaseSHA512(CMDA_Base*& pbase)
-{
-	if (pbase != nullptr)
-	{
-		CMDA_SHA512* psha512 = reinterpret_cast<CMDA_SHA512*>(pbase);
-		delete psha512;
-		pbase = nullptr;
-	}
-}
-
-void CalcSHA512(const uint8_t* src, const size_t len, _MDAVALUE& val, const uint8_t* salt, const size_t saltlen)
-{
-	CMDA_SHA512* psha512 = new CMDA_SHA512();
-	psha512->init();
-	if (salt != nullptr && saltlen != 0)
-	{
-		psha512->set_salt(salt, saltlen);
-	}
-	if (src != nullptr && len != 0)
-	{
-		psha512->update(src, len);
-	}
-	psha512->finish(val);
-	delete psha512;
 }
