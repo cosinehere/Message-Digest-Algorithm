@@ -3,22 +3,22 @@
 
 #define LROT(a,b) l_rot<uint32_t>(a,b)
 
-constexpr uint32_t c_sha1initvar[] = { 0x67452301UL, 0xEFCDAB89UL, 0x98BADCFEUL, 0x10325476UL, 0xC3D2E1F0UL };
+constexpr uint32_t c_sha1initvar[] = { 0x67452301ul, 0xEFCDAB89ul, 0x98BADCFEul, 0x10325476ul, 0xC3D2E1F0ul };
 
 inline void ROUND1(uint32_t a, uint32_t b, uint32_t c, uint32_t d, uint32_t& f, uint32_t& k) {
-	f = ((b) & (c)) | ((~(b)) & (d)); k = 0x5A827999UL;
+	f = ((b) & (c)) | ((~(b)) & (d)); k = 0x5A827999ul;
 }
 
 inline void ROUND2(uint32_t a, uint32_t b, uint32_t c, uint32_t d, uint32_t& f, uint32_t& k) {
-	f = (b) ^ (c) ^ (d); k = 0x6ED9EBA1UL;
+	f = (b) ^ (c) ^ (d); k = 0x6ED9EBA1ul;
 }
 
 inline void ROUND3(uint32_t a, uint32_t b, uint32_t c, uint32_t d, uint32_t& f, uint32_t& k) {
-	f = ((b) & (c)) | ((b) & (d)) | ((c) & (d)); k = 0x8F1BBCDCUL;
+	f = ((b) & (c)) | ((b) & (d)) | ((c) & (d)); k = 0x8F1BBCDCul;
 }
 
 inline void ROUND4(uint32_t a, uint32_t b, uint32_t c, uint32_t d, uint32_t& f, uint32_t& k) {
-	f = (b) ^ (c) ^ (d); k = 0xCA62C1D6UL;
+	f = (b) ^ (c) ^ (d); k = 0xCA62C1D6ul;
 }
 
 CMDA_SHA1::CMDA_SHA1()
