@@ -2,7 +2,9 @@
 cmake_minimum_required(VERSION 3.16)
 
 # specify project name and version
-project(MessageDigestAlgorithm VERSION 1.0)
+project(MessageDigestAlgorithm
+	VERSION 1.0
+	LANGUAGES CXX)
 
 # generate compile_commands.json
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
