@@ -42,5 +42,6 @@ typedef unsigned __int64 uint64_t;
 #endif // defined(_MSC_VER)
 
 #define _MDADLL_EXPORT_
+//#define _MDALIB_EXPORT_
 
 #endif //PCH_H

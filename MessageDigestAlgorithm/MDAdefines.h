@@ -1,7 +1,9 @@
 #pragma once
 
 #if defined(_MSC_VER)
-#ifdef _MDADLL_EXPORT_
+#ifdef _MDALIB_EXPORT_
+#define MDAEXT
+#elif defined(_MDADLL_EXPORT_)
 #define MDAEXT extern "C" __declspec(dllexport)
 #else
 #define MDAEXT extern "C" __declspec(dllimport)
@@ -10,7 +12,9 @@
 #define NOVTABLE __declspec(novtable)
 
 #else
-#ifdef _MDADLL_EXPORT_
+#ifdef _MDALIB_EXPORT_
+#define MDAEXT
+#elif defined(_MDADLL_EXPORT_)
 #define MDAEXT extern "C" __attribute__((visibility("default")))
 #else
 #define MDAEXT
