@@ -82,7 +82,7 @@ public:
 	virtual bool update(const uint8_t* src, const size_t len) = 0;
 	virtual bool finish(_MDAVALUE& dst) = 0;
 
-	virtual ~CMDA_Base() = default;
+	virtual ~CMDA_Base() {};
 };
 
 enum enum_digest
