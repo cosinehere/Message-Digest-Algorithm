@@ -4,9 +4,9 @@
 #ifdef _MDALIB_EXPORT_
 #define MDAEXT
 #elif defined(_MDADLL_EXPORT_)
-#define MDAEXT extern "C" __declspec(dllexport)
+#define MDAEXT __declspec(dllexport)
 #else
-#define MDAEXT extern "C" __declspec(dllimport)
+#define MDAEXT __declspec(dllimport)
 #endif
 
 #define NOVTABLE __declspec(novtable)
@@ -15,7 +15,7 @@
 #ifdef _MDALIB_EXPORT_
 #define MDAEXT
 #elif defined(_MDADLL_EXPORT_)
-#define MDAEXT extern "C" __attribute__((visibility("default")))
+#define MDAEXT __attribute__((visibility("default")))
 #else
 #define MDAEXT
 #endif
