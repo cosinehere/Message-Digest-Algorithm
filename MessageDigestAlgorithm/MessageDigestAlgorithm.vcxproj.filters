@@ -18,9 +18,6 @@
     <ClInclude Include="pch.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="MDAdefines.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="CMDA_MD5.h">
       <Filter>头文件</Filter>
     </ClInclude>
@@ -34,6 +31,12 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="MDATemplates.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="mdatypes.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="mdadefines.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>

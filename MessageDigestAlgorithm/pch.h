@@ -18,7 +18,7 @@ typedef unsigned __int64 uint64_t;
 
 #include <cstdint>
 
-#endif
+#endif  // _MSC_VER < 1400
 
 #if _MSC_VER < 1900 // C++11
 
@@ -26,7 +26,7 @@ typedef unsigned __int64 uint64_t;
 #define nullptr NULL
 #define override
 
-#endif
+#endif  // _MSC_VER < 1900
 
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
@@ -41,7 +41,6 @@ typedef unsigned __int64 uint64_t;
 
 #endif // defined(_MSC_VER)
 
-#define _MDADLL_EXPORT_
-//#define _MDALIB_EXPORT_
+#define _MDA_EXPORT_
 
 #endif //PCH_H

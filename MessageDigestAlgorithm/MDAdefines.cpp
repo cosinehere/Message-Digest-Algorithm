@@ -1,6 +1,6 @@
 #include "pch.h"
 
-#include "MDAdefines.h"
+#include "mdadefines.h"
 #include "CMDA_MD5.h"
 #include "CMDA_SHA1.h"
 #include "CMDA_SHA256.h"

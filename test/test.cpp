@@ -2,7 +2,7 @@
 
 #include "mio.hpp"
 
-#include "../MessageDigestAlgorithm/MDAdefines.h"
+#include "../MessageDigestAlgorithm/mdadefines.h"
 #pragma comment(lib,"../MessageDigestAlgorithm/Debug/MessageDigestAlgorithm")
 
 #include <ctime>

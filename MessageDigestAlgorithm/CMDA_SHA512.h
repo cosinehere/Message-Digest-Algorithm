@@ -1,6 +1,6 @@
 #pragma once
 
-#include "MDAdefines.h"
+#include "mdadefines.h"
 
 class CMDA_SHA512 :
 	public CMDA_Base

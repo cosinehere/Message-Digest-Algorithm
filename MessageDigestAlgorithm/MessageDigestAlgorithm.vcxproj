@@ -159,8 +159,9 @@
     <ClInclude Include="CMDA_SHA1.h" />
     <ClInclude Include="CMDA_SHA256.h" />
     <ClInclude Include="CMDA_SHA512.h" />
-    <ClInclude Include="MDAdefines.h" />
+    <ClInclude Include="mdadefines.h" />
     <ClInclude Include="MDATemplates.h" />
+    <ClInclude Include="mdatypes.h" />
     <ClInclude Include="pch.h" />
   </ItemGroup>
   <ItemGroup>
