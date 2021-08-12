@@ -29,7 +29,10 @@ target_precompile_headers(MessageDigestAlgorithm PRIVATE
 	${CMAKE_SOURCE_DIR}/MessageDigestAlgorithm/pch.h
     )
 target_compile_options(MessageDigestAlgorithm
-    PRIVATE -fvisibility=hidden -Wl,-s
+    PRIVATE -fvisibility=hidden
+    )
+target_link_options(MessageDigestAlgorithm
+    PRIVATE -Wl,-s
     )
 
 # MessageDigestAlgorithmTest
