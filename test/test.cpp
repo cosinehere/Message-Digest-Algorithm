@@ -9,6 +9,8 @@
 #include <string>
 #include <set>
 
+using namespace mda;
+
 constexpr uint32_t c_digestmod[] = { 65537,65539,65543,65551 };
 
 enum enum_module

@@ -33,23 +33,7 @@
 
 #endif // defined(_MSC_VER)
 
-/*! \enum enum_digest
-*
-*   Message Digest Algorithm enum type.
-*/
-enum enum_digest
-{
-	enum_digest_begin = 0,
-
-	enum_digest_md5 = enum_digest_begin,
-	enum_digest_sha1,
-	enum_digest_sha2_256,
-	enum_digest_sha2_512,
-	//enum_digest_sha3
-
-	enum_digest_end,
-	enum_digest_num = enum_digest_end - enum_digest_begin
-};
+namespace mda {
 
 MDAEXT void CreateBase(enum_digest digest, CMDA_Base*& base);
 
@@ -62,5 +46,7 @@ MDAEXT void CalcSHA1(const uint8_t* src, const size_t len, _MDAVALUE& val, const
 MDAEXT void CalcSHA256(const uint8_t* src, const size_t len, _MDAVALUE& val, const uint8_t* salt, const size_t saltlen);
 
 MDAEXT void CalcSHA512(const uint8_t* src, const size_t len, _MDAVALUE& val, const uint8_t* salt, const size_t saltlen);
+
+}
 
 #endif  // _MDADEFINES_H_

@@ -8,6 +8,8 @@
 #ifndef _MDATYPES_H_
 #define _MDATYPES_H_
 
+namespace mda {
+
 #if defined(_MSC_VER)
 #define NOVTABLE __declspec(novtable)
 #else
@@ -85,14 +87,14 @@ public:
     *   \param[in]  len     byte length of salt
     */
     virtual void set_salt(const uint8_t *salt, const size_t len) = 0;
-    
+
     /*! \brief update hash value with input
     *
     *   \param[in]  src     pointer of input data
     *   \param[in]  len     byte length of data
     */
     virtual bool update(const uint8_t *src, const size_t len) = 0;
-    
+
     /*! \brief get final hash value
     *
     *   \param[out] dst     hash value
@@ -103,5 +105,25 @@ public:
     */
     virtual ~CMDA_Base() {};
 };
+
+/*! \enum enum_digest
+*
+*   Message Digest Algorithm enum type.
+*/
+enum enum_digest
+{
+    enum_digest_begin = 0,
+
+    enum_digest_md5 = enum_digest_begin,
+    enum_digest_sha1,
+    enum_digest_sha2_256,
+    enum_digest_sha2_512,
+    //enum_digest_sha3,
+
+    enum_digest_end,
+    enum_digest_num = enum_digest_end - enum_digest_begin
+};
+
+}
 
 #endif  // _MDATYPES_H_
