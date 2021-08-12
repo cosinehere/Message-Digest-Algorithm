@@ -1,7 +1,7 @@
 #include "pch.h"
 #include "CMDA_SHA256.h"
 
-#include "MDATemplates.h"
+#include "mdatemplates.h"
 
 #define RROT(a,b) r_rot<uint32_t>(a,b)
 

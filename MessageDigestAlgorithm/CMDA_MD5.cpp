@@ -1,7 +1,7 @@
 #include "pch.h"
 #include "CMDA_MD5.h"
 
-#include "MDATemplates.h"
+#include "mdatemplates.h"
 
 #define LROT(a,b) l_rot<uint32_t>(a,b)
 

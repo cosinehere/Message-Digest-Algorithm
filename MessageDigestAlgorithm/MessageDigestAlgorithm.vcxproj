@@ -160,7 +160,7 @@
     <ClInclude Include="CMDA_SHA256.h" />
     <ClInclude Include="CMDA_SHA512.h" />
     <ClInclude Include="mdadefines.h" />
-    <ClInclude Include="MDATemplates.h" />
+    <ClInclude Include="mdatemplates.h" />
     <ClInclude Include="mdatypes.h" />
     <ClInclude Include="pch.h" />
   </ItemGroup>
@@ -169,7 +169,7 @@
     <ClCompile Include="CMDA_SHA1.cpp" />
     <ClCompile Include="CMDA_SHA256.cpp" />
     <ClCompile Include="CMDA_SHA512.cpp" />
-    <ClCompile Include="MDAdefines.cpp" />
+    <ClCompile Include="mdadefines.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>

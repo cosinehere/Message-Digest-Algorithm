@@ -30,13 +30,13 @@
     <ClInclude Include="CMDA_SHA512.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="MDATemplates.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="mdatypes.h">
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="mdadefines.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="mdatemplates.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>
@@ -56,7 +56,7 @@
     <ClCompile Include="CMDA_SHA512.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="MDAdefines.cpp">
+    <ClCompile Include="mdadefines.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

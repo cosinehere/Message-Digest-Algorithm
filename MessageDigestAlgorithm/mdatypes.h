@@ -88,14 +88,14 @@ public:
     
     /*! \brief update hash value with input
     *
-    *   \param[in]  src pointer of input data
-    *   \param[in]  len byte length of data
+    *   \param[in]  src     pointer of input data
+    *   \param[in]  len     byte length of data
     */
     virtual bool update(const uint8_t *src, const size_t len) = 0;
     
     /*! \brief get final hash value
     *
-    *   \param[out] dst
+    *   \param[out] dst     hash value
     */
     virtual bool finish(_MDAVALUE &dst) = 0;
 
