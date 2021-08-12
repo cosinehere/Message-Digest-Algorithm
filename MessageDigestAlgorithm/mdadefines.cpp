@@ -70,6 +70,9 @@ void CreateBase(enum_digest digest, CMDA_Base *&base) {
     case enum_digest_sha2_512:
         CreateSHA512(base);
         break;
+    case enum_digest_num:
+    default:
+        break;
     }
 }
 
@@ -86,6 +89,9 @@ void ReleaseBase(enum_digest digest, CMDA_Base *&base) {
         break;
     case enum_digest_sha2_512:
         ReleaseSHA512(base);
+        break;
+    case enum_digest_num:
+    default:
         break;
     }
 }

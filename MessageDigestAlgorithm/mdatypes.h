@@ -99,16 +99,13 @@ public:
  *  Message Digest Algorithm enum type.
  */
 enum enum_digest {
-    enum_digest_begin = 0,
-
-    enum_digest_md5 = enum_digest_begin,
+    enum_digest_md5 = 0,
     enum_digest_sha1,
     enum_digest_sha2_256,
     enum_digest_sha2_512,
     // enum_digest_sha3,
 
-    enum_digest_end,
-    enum_digest_num = enum_digest_end - enum_digest_begin
+    enum_digest_num
 };
 
 } // namespace mda
