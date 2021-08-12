@@ -93,7 +93,7 @@ bool CMDA_SHA1::update(const uint8_t *src, const size_t len) {
     return true;
 }
 
-bool CMDA_SHA1::finish(_MDAVALUE &dst) {
+bool CMDA_SHA1::finish(_MDACTX &dst) {
     if (p_salt != nullptr) {
         update(p_salt, p_saltlen);
     }

@@ -85,7 +85,7 @@ bool CMDA_SHA256::update(const uint8_t *src, const size_t len) {
     return true;
 }
 
-bool CMDA_SHA256::finish(_MDAVALUE &dst) {
+bool CMDA_SHA256::finish(_MDACTX &dst) {
     if (p_salt != nullptr) {
         update(p_salt, p_saltlen);
     }

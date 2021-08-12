@@ -12,10 +12,10 @@ public:
     virtual void init() override;
     virtual void set_salt(const uint8_t *salt, const size_t len) override;
     virtual bool update(const uint8_t *src, const size_t len) override;
-    virtual bool finish(_MDAVALUE &dst) override;
+    virtual bool finish(_MDACTX &dst) override;
 
 private:
-    _MDAVALUE p_val;
+    _MDACTX p_val;
 
     uint8_t *p_salt;
     size_t p_saltlen;

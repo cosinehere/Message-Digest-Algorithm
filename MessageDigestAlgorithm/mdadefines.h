@@ -39,16 +39,16 @@ MDAEXT void CreateBase(enum_digest digest, CMDA_Base *&base);
 
 MDAEXT void ReleaseBase(enum_digest digest, CMDA_Base *&base);
 
-MDAEXT void CalcMD5(const uint8_t *src, const size_t len, _MDAVALUE &val,
+MDAEXT void CalcMD5(const uint8_t *src, const size_t len, _MDACTX &val,
                     const uint8_t *salt, const size_t saltlen);
 
-MDAEXT void CalcSHA1(const uint8_t *src, const size_t len, _MDAVALUE &val,
+MDAEXT void CalcSHA1(const uint8_t *src, const size_t len, _MDACTX &val,
                      const uint8_t *salt, const size_t saltlen);
 
-MDAEXT void CalcSHA256(const uint8_t *src, const size_t len, _MDAVALUE &val,
+MDAEXT void CalcSHA256(const uint8_t *src, const size_t len, _MDACTX &val,
                        const uint8_t *salt, const size_t saltlen);
 
-MDAEXT void CalcSHA512(const uint8_t *src, const size_t len, _MDAVALUE &val,
+MDAEXT void CalcSHA512(const uint8_t *src, const size_t len, _MDACTX &val,
                        const uint8_t *salt, const size_t saltlen);
 
 } // namespace mda

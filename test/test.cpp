@@ -20,7 +20,7 @@ enum enum_module
 
 constexpr char c_strpath_all[] = ".\\";
 
-void PreProcessVal(_MDAVALUE& val, enum_digest& digest)
+void PreProcessVal(_MDACTX& val, enum_digest& digest)
 {
 	if (val.len == 17 && val.val[16])
 	{
@@ -68,7 +68,7 @@ void PreProcessVal(_MDAVALUE& val, enum_digest& digest)
 	val.len = 17;
 }
 
-void PostProcessVal(enum_digest digest, _MDAVALUE& val)
+void PostProcessVal(enum_digest digest, _MDACTX& val)
 {
 	size_t len = val.len;
 	if (len > 16)
@@ -76,7 +76,7 @@ void PostProcessVal(enum_digest digest, _MDAVALUE& val)
 		return;
 	}
 
-	_MDAVALUE sha512;
+	_MDACTX sha512;
 	CalcSHA512(reinterpret_cast<uint8_t*>(val.val), val.len * 4, sha512, nullptr, 0);
 	memcpy(&val.val[len], sha512.val, sizeof(uint32_t)*(17 - len));
 
@@ -200,7 +200,7 @@ void UpdateWithFile(const char* path, CMDA_Base* base)
 	delete file;
 }
 
-bool Digest(const uint8_t* src, const size_t len, _MDAVALUE& val, const uint8_t* salt, const size_t saltlen)
+bool Digest(const uint8_t* src, const size_t len, _MDACTX& val, const uint8_t* salt, const size_t saltlen)
 {
 	enum_digest digest;
 	PreProcessVal(val, digest);
@@ -227,7 +227,7 @@ bool Digest(const uint8_t* src, const size_t len, _MDAVALUE& val, const uint8_t*
 	return true;
 }
 
-bool DigestSel(enum_digest digest, const uint8_t* src, const size_t len, _MDAVALUE& val, const uint8_t* salt, const size_t saltlen)
+bool DigestSel(enum_digest digest, const uint8_t* src, const size_t len, _MDACTX& val, const uint8_t* salt, const size_t saltlen)
 {
 	switch (digest)
 	{
@@ -251,7 +251,7 @@ bool DigestSel(enum_digest digest, const uint8_t* src, const size_t len, _MDAVAL
 	return false;
 }
 
-bool FileDigest(const char* path, _MDAVALUE& val)
+bool FileDigest(const char* path, _MDACTX& val)
 {
 	enum_digest digest;
 	PreProcessVal(val, digest);
@@ -273,7 +273,7 @@ bool FileDigest(const char* path, _MDAVALUE& val)
 	return true;
 }
 
-bool PathDigest(const char* path, _MDAVALUE& val, bool recursive)
+bool PathDigest(const char* path, _MDACTX& val, bool recursive)
 {
 	enum_digest digest;
 	PreProcessVal(val, digest);
@@ -304,7 +304,7 @@ bool PathDigest(const char* path, _MDAVALUE& val, bool recursive)
 	return true;
 }
 
-bool ModuleDigest(enum_module module, _MDAVALUE& val)
+bool ModuleDigest(enum_module module, _MDACTX& val)
 {
 	enum_digest digest;
 	PreProcessVal(val, digest);
@@ -325,7 +325,7 @@ bool ModuleDigest(enum_module module, _MDAVALUE& val)
 int main()
 {
 	uint8_t s[71] = { "ageaimpahgdanjfleqjtpegasncmx.bnfbhjqethewqphdslangjdslagxhugpbqkrtewt" };
-	_MDAVALUE val;
+	_MDACTX val;
 	uint8_t salt[4] = { "123" };
 
 	Digest(s, 70, val, nullptr, 0);

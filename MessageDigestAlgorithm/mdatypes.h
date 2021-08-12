@@ -16,20 +16,20 @@ namespace mda {
 #define NOVTABLE
 #endif // defined(_MSC_VER)
 
-/*! \struct _MDAVALUE
+/*! \struct _MDACTX
  *
  *
  */
-struct _MDAVALUE {
+struct _MDACTX {
     uint32_t val[17];
     size_t len;
 
-    _MDAVALUE() {
+    _MDACTX() {
         memset(val, 0, sizeof(val));
         len = 0;
     }
 
-    _MDAVALUE(const uint32_t *v, const size_t l) {
+    _MDACTX(const uint32_t *v, const size_t l) {
         if (v == nullptr || l == 0) {
             len = 0;
         } else {
@@ -45,12 +45,12 @@ struct _MDAVALUE {
         }
     }
 
-    _MDAVALUE &operator=(const _MDAVALUE &o) {
+    _MDACTX &operator=(const _MDACTX &o) {
         init(o.val, o.len);
         return *this;
     }
 
-    bool operator==(const _MDAVALUE &o) const {
+    bool operator==(const _MDACTX &o) const {
         if (len != o.len) {
             return false;
         }
@@ -87,7 +87,7 @@ public:
      *
      *  \param[out] dst     hash value
      */
-    virtual bool finish(_MDAVALUE &dst) = 0;
+    virtual bool finish(_MDACTX &dst) = 0;
 
     /*! \brief destructor
      */

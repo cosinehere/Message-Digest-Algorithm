@@ -96,7 +96,7 @@ void ReleaseBase(enum_digest digest, CMDA_Base *&base) {
     }
 }
 
-void CalcMD5(const uint8_t *src, const size_t len, _MDAVALUE &val,
+void CalcMD5(const uint8_t *src, const size_t len, _MDACTX &val,
              const uint8_t *salt, const size_t saltlen) {
     CMDA_MD5 *pmd5 = new CMDA_MD5();
     pmd5->init();
@@ -110,7 +110,7 @@ void CalcMD5(const uint8_t *src, const size_t len, _MDAVALUE &val,
     delete pmd5;
 }
 
-void CalcSHA1(const uint8_t *src, const size_t len, _MDAVALUE &val,
+void CalcSHA1(const uint8_t *src, const size_t len, _MDACTX &val,
               const uint8_t *salt, const size_t saltlen) {
     CMDA_SHA1 *psha1 = new CMDA_SHA1();
     psha1->init();
@@ -124,7 +124,7 @@ void CalcSHA1(const uint8_t *src, const size_t len, _MDAVALUE &val,
     delete psha1;
 }
 
-void CalcSHA256(const uint8_t *src, const size_t len, _MDAVALUE &val,
+void CalcSHA256(const uint8_t *src, const size_t len, _MDACTX &val,
                 const uint8_t *salt, const size_t saltlen) {
     CMDA_SHA256 *psha256 = new CMDA_SHA256();
     psha256->init();
@@ -138,7 +138,7 @@ void CalcSHA256(const uint8_t *src, const size_t len, _MDAVALUE &val,
     delete psha256;
 }
 
-void CalcSHA512(const uint8_t *src, const size_t len, _MDAVALUE &val,
+void CalcSHA512(const uint8_t *src, const size_t len, _MDACTX &val,
                 const uint8_t *salt, const size_t saltlen) {
     CMDA_SHA512 *psha512 = new CMDA_SHA512();
     psha512->init();
