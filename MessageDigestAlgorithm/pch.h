@@ -1,9 +1,9 @@
 ﻿#ifndef PCH_H
 #define PCH_H
 
-#if defined(_MSC_VER)	// MSVC
+#if defined(_MSC_VER) // MSVC
 
-#if _MSC_VER < 1400	// stdint.h
+#if _MSC_VER < 1400 // stdint.h
 
 typedef char int8_t;
 typedef unsigned char uint8_t;
@@ -18,7 +18,7 @@ typedef unsigned __int64 uint64_t;
 
 #include <cstdint>
 
-#endif  // _MSC_VER < 1400
+#endif // _MSC_VER < 1400
 
 #if _MSC_VER < 1900 // C++11
 
@@ -26,7 +26,7 @@ typedef unsigned __int64 uint64_t;
 #define nullptr NULL
 #define override
 
-#endif  // _MSC_VER < 1900
+#endif // _MSC_VER < 1900
 
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
@@ -43,4 +43,4 @@ typedef unsigned __int64 uint64_t;
 
 #define _MDA_EXPORT_
 
-#endif //PCH_H
+#endif // PCH_H

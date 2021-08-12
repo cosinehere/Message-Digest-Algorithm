@@ -5,30 +5,50 @@
 
 namespace mda {
 
-#define LROT(a,b) l_rot<uint32_t>(a,b)
+#define LROT(a, b) l_rot<uint32_t>(a, b)
 
-constexpr uint32_t c_md5initvar[] = { 0x67452301ul, 0xEFCDAB89ul, 0x98BADCFEul, 0x10325476ul };
+constexpr uint32_t c_md5initvar[] = {0x67452301ul, 0xEFCDAB89ul, 0x98BADCFEul,
+                                     0x10325476ul};
 
-inline uint32_t F(uint32_t x, uint32_t y, uint32_t z) { return (x & y) | ((~x) & z); }
-inline uint32_t G(uint32_t x, uint32_t y, uint32_t z) { return (x & z) | (y & (~z)); }
+inline uint32_t F(uint32_t x, uint32_t y, uint32_t z) {
+    return (x & y) | ((~x) & z);
+}
+inline uint32_t G(uint32_t x, uint32_t y, uint32_t z) {
+    return (x & z) | (y & (~z));
+}
 inline uint32_t H(uint32_t x, uint32_t y, uint32_t z) { return x ^ y ^ z; }
 inline uint32_t I(uint32_t x, uint32_t y, uint32_t z) { return y ^ (x | (~z)); }
 
-inline void FF(uint32_t& a, uint32_t& b, uint32_t& c, uint32_t& d, uint32_t Mj, uint32_t s, uint32_t ti) {
-    a += F(b, c, d) + Mj + ti; a = LROT(a, s); a += b;
-}
-inline void GG(uint32_t& a, uint32_t& b, uint32_t& c, uint32_t& d, uint32_t Mj, uint32_t s, uint32_t ti) {
-    a += G(b, c, d) + Mj + ti; a = LROT(a, s); a += b;
-}
-inline void HH(uint32_t& a, uint32_t& b, uint32_t& c, uint32_t& d, uint32_t Mj, uint32_t s, uint32_t ti) {
-    a += H(b, c, d) + Mj + ti; a = LROT(a, s); a += b;
-}
-inline void II(uint32_t& a, uint32_t& b, uint32_t& c, uint32_t& d, uint32_t Mj, uint32_t s, uint32_t ti) {
-    a += I(b, c, d) + Mj + ti; a = LROT(a, s); a += b;
+inline void FF(uint32_t &a, uint32_t &b, uint32_t &c, uint32_t &d, uint32_t Mj,
+               uint32_t s, uint32_t ti) {
+    a += F(b, c, d) + Mj + ti;
+    a = LROT(a, s);
+    a += b;
 }
 
-inline void ROUND1(uint32_t& a, uint32_t& b, uint32_t& c, uint32_t& d, uint32_t* M)
-{
+inline void GG(uint32_t &a, uint32_t &b, uint32_t &c, uint32_t &d, uint32_t Mj,
+               uint32_t s, uint32_t ti) {
+    a += G(b, c, d) + Mj + ti;
+    a = LROT(a, s);
+    a += b;
+}
+
+inline void HH(uint32_t &a, uint32_t &b, uint32_t &c, uint32_t &d, uint32_t Mj,
+               uint32_t s, uint32_t ti) {
+    a += H(b, c, d) + Mj + ti;
+    a = LROT(a, s);
+    a += b;
+}
+
+inline void II(uint32_t &a, uint32_t &b, uint32_t &c, uint32_t &d, uint32_t Mj,
+               uint32_t s, uint32_t ti) {
+    a += I(b, c, d) + Mj + ti;
+    a = LROT(a, s);
+    a += b;
+}
+
+inline void ROUND1(uint32_t &a, uint32_t &b, uint32_t &c, uint32_t &d,
+                   uint32_t *M) {
     FF(a, b, c, d, M[0], 7, 0xd76aa478ul);
     FF(d, a, b, c, M[1], 12, 0xe8c7b756ul);
     FF(c, d, a, b, M[2], 17, 0x242070dbul);
@@ -47,8 +67,8 @@ inline void ROUND1(uint32_t& a, uint32_t& b, uint32_t& c, uint32_t& d, uint32_t*
     FF(b, c, d, a, M[15], 22, 0x49b40821ul);
 }
 
-inline void ROUND2(uint32_t& a, uint32_t& b, uint32_t& c, uint32_t& d, uint32_t* M)
-{
+inline void ROUND2(uint32_t &a, uint32_t &b, uint32_t &c, uint32_t &d,
+                   uint32_t *M) {
     GG(a, b, c, d, M[1], 5, 0xf61e2562ul);
     GG(d, a, b, c, M[6], 9, 0xc040b340ul);
     GG(c, d, a, b, M[11], 14, 0x265e5a51ul);
@@ -67,8 +87,8 @@ inline void ROUND2(uint32_t& a, uint32_t& b, uint32_t& c, uint32_t& d, uint32_t*
     GG(b, c, d, a, M[12], 20, 0x8d2a4c8aul);
 }
 
-inline void ROUND3(uint32_t& a, uint32_t& b, uint32_t& c, uint32_t& d, uint32_t* M)
-{
+inline void ROUND3(uint32_t &a, uint32_t &b, uint32_t &c, uint32_t &d,
+                   uint32_t *M) {
     HH(a, b, c, d, M[5], 4, 0xfffa3942ul);
     HH(d, a, b, c, M[8], 11, 0x8771f681ul);
     HH(c, d, a, b, M[11], 16, 0x6d9d6122ul);
@@ -87,8 +107,8 @@ inline void ROUND3(uint32_t& a, uint32_t& b, uint32_t& c, uint32_t& d, uint32_t*
     HH(b, c, d, a, M[2], 23, 0xc4ac5665ul);
 }
 
-inline void ROUND4(uint32_t& a, uint32_t& b, uint32_t& c, uint32_t& d, uint32_t* M)
-{
+inline void ROUND4(uint32_t &a, uint32_t &b, uint32_t &c, uint32_t &d,
+                   uint32_t *M) {
     II(a, b, c, d, M[0], 6, 0xf4292244ul);
     II(d, a, b, c, M[7], 10, 0x432aff97ul);
     II(c, d, a, b, M[14], 15, 0xab9423a7ul);
@@ -107,9 +127,7 @@ inline void ROUND4(uint32_t& a, uint32_t& b, uint32_t& c, uint32_t& d, uint32_t*
     II(b, c, d, a, M[9], 21, 0xeb86d391ul);
 }
 
-CMDA_MD5::CMDA_MD5()
-    : p_val(c_md5initvar, 4)
-{
+CMDA_MD5::CMDA_MD5() : p_val(c_md5initvar, 4) {
     p_salt = nullptr;
     p_saltlen = 0;
 
@@ -117,22 +135,18 @@ CMDA_MD5::CMDA_MD5()
     totbytes = 0;
 }
 
-CMDA_MD5::~CMDA_MD5()
-{
-    if (p_salt != nullptr)
-    {
+CMDA_MD5::~CMDA_MD5() {
+    if (p_salt != nullptr) {
         delete[] p_salt;
         p_salt = nullptr;
         p_saltlen = 0;
     }
 }
 
-void CMDA_MD5::init()
-{
+void CMDA_MD5::init() {
     p_val.init(c_md5initvar, 4);
 
-    if (p_salt != nullptr)
-    {
+    if (p_salt != nullptr) {
         delete[] p_salt;
         p_salt = nullptr;
         p_saltlen = 0;
@@ -142,30 +156,26 @@ void CMDA_MD5::init()
     totbytes = 0;
 }
 
-void CMDA_MD5::set_salt(const uint8_t* salt, const size_t len)
-{
-    if (p_salt != nullptr)
-    {
+void CMDA_MD5::set_salt(const uint8_t *salt, const size_t len) {
+    if (p_salt != nullptr) {
         delete[] p_salt;
     }
 
     p_salt = new uint8_t[len];
-    memcpy(p_salt, salt, sizeof(uint8_t)*len);
+    memcpy(p_salt, salt, sizeof(uint8_t) * len);
     p_saltlen = len;
 }
 
-bool CMDA_MD5::update(const uint8_t* src, const size_t len)
-{
+bool CMDA_MD5::update(const uint8_t *src, const size_t len) {
     size_t cnt = 0;
-    while (cnt < len)
-    {
-        size_t bufleft = (len - cnt > 64 - buflen) ? (64 - buflen) : (len - cnt);
+    while (cnt < len) {
+        size_t bufleft =
+            (len - cnt > 64 - buflen) ? (64 - buflen) : (len - cnt);
         memcpy(&buffer[buflen], src + cnt, bufleft * sizeof(uint8_t));
         cnt += bufleft;
         buflen += bufleft;
 
-        if (buflen == 64)
-        {
+        if (buflen == 64) {
             transform();
             buflen = 0;
         }
@@ -176,10 +186,8 @@ bool CMDA_MD5::update(const uint8_t* src, const size_t len)
     return true;
 }
 
-bool CMDA_MD5::finish(_MDAVALUE& dst)
-{
-    if (p_salt != nullptr)
-    {
+bool CMDA_MD5::finish(_MDAVALUE &dst) {
+    if (p_salt != nullptr) {
         update(p_salt, p_saltlen);
     }
 
@@ -187,27 +195,23 @@ bool CMDA_MD5::finish(_MDAVALUE& dst)
     ++totbytes;
     buffer[buflen] = 0x80;
     ++buflen;
-    while ((totbytes & 0x3f) != 0x38)
-    {
+    while ((totbytes & 0x3f) != 0x38) {
         ++totbytes;
         buffer[buflen] = 0x00;
         ++buflen;
 
-        if (buflen == 64)
-        {
+        if (buflen == 64) {
             transform();
             buflen = 0;
         }
     }
 
-    for (int i = 0; i < 8; ++i)
-    {
+    for (int i = 0; i < 8; ++i) {
         buffer[buflen + i] = (totbits >> (i * 8)) & 0xff;
     }
     buflen += 8;
 
-    if (buflen == 64)
-    {
+    if (buflen == 64) {
         transform();
         buflen = 0;
     }
@@ -217,10 +221,10 @@ bool CMDA_MD5::finish(_MDAVALUE& dst)
     return true;
 }
 
-void CMDA_MD5::transform()
-{
-    uint32_t a = p_val.val[0], b = p_val.val[1], c = p_val.val[2], d = p_val.val[3];
-    uint32_t* pbuf = reinterpret_cast<uint32_t*>(buffer);
+void CMDA_MD5::transform() {
+    uint32_t a = p_val.val[0], b = p_val.val[1], c = p_val.val[2],
+             d = p_val.val[3];
+    uint32_t *pbuf = reinterpret_cast<uint32_t *>(buffer);
 
     ROUND1(a, b, c, d, pbuf);
     ROUND2(a, b, c, d, pbuf);
@@ -233,4 +237,4 @@ void CMDA_MD5::transform()
     p_val.val[3] += d;
 }
 
-}
+} // namespace mda

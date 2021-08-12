@@ -1,7 +1,7 @@
 /*! \file mdatypes.h
-*
-*   Message Digest Algorithm base type header.
-*/
+ *
+ *  Message Digest Algorithm base type header.
+ */
 
 #pragma once
 
@@ -17,113 +17,100 @@ namespace mda {
 #endif // defined(_MSC_VER)
 
 /*! \struct _MDAVALUE
-*
-*
-*/
-struct _MDAVALUE
-{
+ *
+ *
+ */
+struct _MDAVALUE {
     uint32_t val[17];
     size_t len;
 
-    _MDAVALUE()
-    {
+    _MDAVALUE() {
         memset(val, 0, sizeof(val));
         len = 0;
     }
 
-    _MDAVALUE(const uint32_t *v, const size_t l)
-    {
-        if (v == nullptr || l == 0)
-        {
+    _MDAVALUE(const uint32_t *v, const size_t l) {
+        if (v == nullptr || l == 0) {
             len = 0;
-        }
-        else
-        {
+        } else {
             len = (l > 17) ? 17 : l;
-            memcpy(val, v, sizeof(uint32_t)*len);
+            memcpy(val, v, sizeof(uint32_t) * len);
         }
     }
 
-    void init(const uint32_t *v, const size_t l)
-    {
-        if (v != nullptr && l != 0)
-        {
+    void init(const uint32_t *v, const size_t l) {
+        if (v != nullptr && l != 0) {
             len = (l > 17) ? 17 : l;
-            memcpy(val, v, sizeof(uint32_t)*len);
+            memcpy(val, v, sizeof(uint32_t) * len);
         }
     }
 
-    _MDAVALUE &operator=(const _MDAVALUE& o)
-    {
+    _MDAVALUE &operator=(const _MDAVALUE &o) {
         init(o.val, o.len);
         return *this;
     }
 
-    bool operator==(const _MDAVALUE& o) const
-    {
-        if (len != o.len)
-        {
+    bool operator==(const _MDAVALUE &o) const {
+        if (len != o.len) {
             return false;
         }
 
-        return (memcmp(val, o.val, sizeof(uint32_t)*len) == 0);
+        return (memcmp(val, o.val, sizeof(uint32_t) * len) == 0);
     }
 };
 
 /*! \class CMDA_Base
-*
-*   Message Digest Algorithm interface class.
-*/
-class NOVTABLE CMDA_Base
-{
+ *
+ *  Message Digest Algorithm interface class.
+ */
+class NOVTABLE CMDA_Base {
 public:
     /*! \brief initialize
-    */
+     */
     virtual void init() = 0;
 
     /*! \brief set salt value
-    *
-    *   \param[in]  salt    pointer to salt
-    *   \param[in]  len     byte length of salt
-    */
+     *
+     *  \param[in]  salt    pointer to salt
+     *  \param[in]  len     byte length of salt
+     */
     virtual void set_salt(const uint8_t *salt, const size_t len) = 0;
 
     /*! \brief update hash value with input
-    *
-    *   \param[in]  src     pointer of input data
-    *   \param[in]  len     byte length of data
-    */
+     *
+     *  \param[in]  src     pointer of input data
+     *  \param[in]  len     byte length of data
+     */
     virtual bool update(const uint8_t *src, const size_t len) = 0;
 
     /*! \brief get final hash value
-    *
-    *   \param[out] dst     hash value
-    */
+     *
+     *  \param[out] dst     hash value
+     */
     virtual bool finish(_MDAVALUE &dst) = 0;
 
     /*! \brief destructor
-    */
-    virtual ~CMDA_Base() {};
+     */
+    virtual ~CMDA_Base(){};
 };
 
 /*! \enum enum_digest
-*
-*   Message Digest Algorithm enum type.
-*/
-enum enum_digest
-{
+ *
+ *  Message Digest Algorithm enum type.
+ */
+enum enum_digest {
     enum_digest_begin = 0,
 
     enum_digest_md5 = enum_digest_begin,
     enum_digest_sha1,
     enum_digest_sha2_256,
     enum_digest_sha2_512,
-    //enum_digest_sha3,
+    // enum_digest_sha3,
 
     enum_digest_end,
     enum_digest_num = enum_digest_end - enum_digest_begin
 };
 
-}
+} // namespace mda
 
-#endif  // _MDATYPES_H_
+#endif // _MDATYPES_H_
