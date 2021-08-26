@@ -5,6 +5,7 @@
 #include "CMDA_SHA1.h"
 #include "CMDA_SHA256.h"
 #include "CMDA_SHA512.h"
+#include "CMDA_SM3.h"
 
 namespace mda {
 
@@ -56,6 +57,18 @@ inline void ReleaseSHA512(CMDA_Base *&pbase) {
     }
 }
 
+inline void CreateSM3(CMDA_Base *&pbase) {
+    pbase = reinterpret_cast<CMDA_Base *>(new CMDA_SM3());
+}
+
+inline void ReleaseSM3(CMDA_Base *&pbase) {
+    if (pbase != nullptr) {
+        CMDA_SM3 *psm3 = reinterpret_cast<CMDA_SM3 *>(pbase);
+        delete psm3;
+        pbase = nullptr;
+    }
+}
+
 void CreateBase(enum_digest digest, CMDA_Base *&base) {
     switch (digest) {
     case enum_digest_md5:
@@ -69,6 +82,9 @@ void CreateBase(enum_digest digest, CMDA_Base *&base) {
         break;
     case enum_digest_sha2_512:
         CreateSHA512(base);
+        break;
+    case enum_digest_sm3:
+        CreateSM3(base);
         break;
     case enum_digest_num:
     default:
@@ -89,6 +105,9 @@ void ReleaseBase(enum_digest digest, CMDA_Base *&base) {
         break;
     case enum_digest_sha2_512:
         ReleaseSHA512(base);
+        break;
+    case enum_digest_sm3:
+        ReleaseSM3(base);
         break;
     case enum_digest_num:
     default:
@@ -150,6 +169,20 @@ void CalcSHA512(const uint8_t *src, const size_t len, _MDACTX &val,
     }
     psha512->finish(val);
     delete psha512;
+}
+
+void CalcSM3(const uint8_t *src, const size_t len, _MDACTX &val,
+             const uint8_t *salt, const size_t saltlen) {
+    CMDA_SM3 *psm3 = new CMDA_SM3();
+    psm3->init();
+    if (salt != nullptr && saltlen != 0) {
+        psm3->set_salt(salt, saltlen);
+    }
+    if (src != nullptr && len != 0) {
+        psm3->update(src, len);
+    }
+    psm3->finish(val);
+    delete psm3;
 }
 
 } // namespace mda

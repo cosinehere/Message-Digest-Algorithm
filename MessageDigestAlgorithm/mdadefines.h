@@ -51,6 +51,9 @@ MDAEXT void CalcSHA256(const uint8_t *src, const size_t len, _MDACTX &val,
 MDAEXT void CalcSHA512(const uint8_t *src, const size_t len, _MDACTX &val,
                        const uint8_t *salt, const size_t saltlen);
 
+MDAEXT void CalcSM3(const uint8_t *src, const size_t len, _MDACTX &val,
+                    const uint8_t *salt, const size_t saltlen);
+
 } // namespace mda
 
 #endif // _MDADEFINES_H_

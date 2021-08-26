@@ -104,6 +104,7 @@ enum enum_digest {
     enum_digest_sha2_256,
     enum_digest_sha2_512,
     // enum_digest_sha3,
+    enum_digest_sm3,
 
     enum_digest_num
 };
