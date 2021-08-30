@@ -23,6 +23,7 @@ add_library(MessageDigestAlgorithm SHARED
 	${CMAKE_SOURCE_DIR}/MessageDigestAlgorithm/CMDA_SHA1.cpp
 	${CMAKE_SOURCE_DIR}/MessageDigestAlgorithm/CMDA_SHA256.cpp
 	${CMAKE_SOURCE_DIR}/MessageDigestAlgorithm/CMDA_SHA512.cpp
+    ${CMAKE_SOURCE_DIR}/MessageDigestAlgorithm/CMDA_SM3.cpp
 	${CMAKE_SOURCE_DIR}/MessageDigestAlgorithm/mdadefines.cpp
 	)
 target_precompile_headers(MessageDigestAlgorithm PRIVATE
