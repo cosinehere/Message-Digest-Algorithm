@@ -16,30 +16,19 @@ set(CMAKE_CXX_STANDARD_REQUIRED True)
 # global g++ compile flags
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall")
 
-# MessageDigestAlgorithm.so
+if(${CMAKE_BUILD_TYPE} MATCHES Debug)
+	set(mdalib MessageDigest_debug)
+	set(mdatest testd)
+else()
+	set(mdalib MessageDigest)
+	set(mdatest test)
+endif()
+
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/build/lib)
-add_library(MessageDigestAlgorithm SHARED
-	${CMAKE_SOURCE_DIR}/MessageDigestAlgorithm/CMDA_MD5.cpp
-	${CMAKE_SOURCE_DIR}/MessageDigestAlgorithm/CMDA_SHA1.cpp
-	${CMAKE_SOURCE_DIR}/MessageDigestAlgorithm/CMDA_SHA256.cpp
-	${CMAKE_SOURCE_DIR}/MessageDigestAlgorithm/CMDA_SHA512.cpp
-    ${CMAKE_SOURCE_DIR}/MessageDigestAlgorithm/CMDA_SM3.cpp
-	${CMAKE_SOURCE_DIR}/MessageDigestAlgorithm/mdadefines.cpp
-	)
-target_precompile_headers(MessageDigestAlgorithm PRIVATE
-	${CMAKE_SOURCE_DIR}/MessageDigestAlgorithm/pch.h
-    )
-target_compile_options(MessageDigestAlgorithm
-    PRIVATE -fvisibility=hidden
-    )
-target_link_options(MessageDigestAlgorithm
-    PRIVATE -Wl,-s
-    )
-
-# MessageDigestAlgorithmTest
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/build/bin)
-add_executable(MDATest
-	${CMAKE_SOURCE_DIR}/test/test.cpp
-	)
-target_link_libraries(MDATest MessageDigestAlgorithm)
 
+# MessageDigest.so
+add_subdirectory(MessageDigestAlgorithm)
+
+# MessageDigestTest
+add_subdirectory(test)
