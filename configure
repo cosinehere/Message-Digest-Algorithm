@@ -1,0 +1,38 @@
+#!/bin/bash
+
+debug=1
+clean=0
+
+for i in "$@"; do
+    if [ $i == "debug" ]
+    then
+        debug=1
+    elif [ $i == "release" ]
+    then
+        debug=0
+    elif [ $i == "clean" ]
+    then
+        clean=1
+    fi
+done
+
+
+if [ ${clean} == 0 ]; then
+    if [ ! -d "./build" ]; then
+        mkdir build
+    fi
+
+    cd build
+
+    if [ ${debug} == 1 ]; then
+        echo "build Debug"
+        cmake -DCMAKE_BUILD_TYPE=Debug ..
+    else
+        echo "build Release"
+        cmake -DCMAKE_BUILD_TYPE=Release ..
+    fi
+    make -j4 all
+else
+    rm -rf ./build
+fi
+

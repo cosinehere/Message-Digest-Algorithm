@@ -17,7 +17,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED True)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall")
 
 # MessageDigestAlgorithm.so
-set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/lib)
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/build/lib)
 add_library(MessageDigestAlgorithm SHARED
 	${CMAKE_SOURCE_DIR}/MessageDigestAlgorithm/CMDA_MD5.cpp
 	${CMAKE_SOURCE_DIR}/MessageDigestAlgorithm/CMDA_SHA1.cpp
@@ -37,7 +37,7 @@ target_link_options(MessageDigestAlgorithm
     )
 
 # MessageDigestAlgorithmTest
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/bin)
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/build/bin)
 add_executable(MDATest
 	${CMAKE_SOURCE_DIR}/test/test.cpp
 	)
